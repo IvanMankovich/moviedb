@@ -1,0 +1,68 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+@import './../../style/common-variables.scss';
+
+.btn {
+  box-sizing: border-box;
+  padding: $btn-padding;
+  border: $btn-bd-thickness solid;
+  border-radius: $btn-bd-radius;
+  @include themify($themes) {
+    background-color: themed('btnBg');
+    border-color: themed('btnBd');
+    color: themed('btnContent');
+  }
+  @include addTransitionForProp(background-color, border-color, color);
+  font-weight: $btn-text-weight;
+  text-align: center;
+  cursor: pointer;
+
+  &:hover {
+    @include themify($themes) {
+      background-color: themed('btnBgHov');
+      border-color: themed('btnBdHov');
+    }
+  }
+
+  &_bordered {
+    @include themify($themes) {
+      background-color: themed('btnBgBor');
+      border-color: themed('btnBdBor');
+    }
+
+    &:hover {
+      @include themify($themes) {
+        background-color: themed('btnBgBorHov');
+        border-color: themed('btnBdBorHov');
+      }
+    }
+  }
+
+  &_transparent {
+    @include themify($themes) {
+      background-color: themed('btnBgTp');
+      border-color: themed('btnBdTp');
+    }
+
+    &:hover {
+      @include themify($themes) {
+        background-color: themed('btnBgTpHov');
+        border-color: themed('btnBdTpHov');
+      }
+    }
+  }
+
+  &_transparent.btn_bordered {
+    @include themify($themes) {
+      background-color: themed('btnBgTp');
+      border-color: themed('btnBdBor');
+    }
+
+    &:hover {
+      @include themify($themes) {
+        background-color: themed('btnBgTpHov');
+        border-color: themed('btnBdBorHov');
+      }
+    }
+  }
+}

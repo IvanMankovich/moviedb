@@ -1,0 +1,28 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+@import './../../style/common-variables.scss';
+
+.header-wrapper {
+  box-sizing: border-box;
+  @include flex(row, space-between, center);
+  width: 100%;
+  min-height: $top-bottom-min-height;
+  max-height: $top-bottom-min-height;
+  padding: 0;
+  @include themify($themes) {
+    background-color: themed('panelBg');
+  }
+  @include addTransitionForProp(background-color);
+  text-align: center;
+}
+
+.header {
+  box-sizing: border-box;
+  position: relative;
+  @include flex(row, space-between, stretch);
+  flex: 1 0 auto;
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
+  @include contentQueryWidth();
+}

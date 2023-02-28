@@ -1,0 +1,84 @@
+@mixin responsiveWidth($startWidth) {
+  width: $startWidth;
+
+  @media screen and (min-width: 320px) {
+    width: 75%;
+  }
+
+  @media screen and (min-width: 768px) {
+    width: 50%;
+  }
+
+  @media screen and (min-width: 1240px) {
+    width: 33%;
+  }
+
+  @media screen and (min-width: 1960px) {
+    width: 25%;
+  }
+}
+
+@mixin flex($flexDirection, $justifyContent, $alignItems) {
+  display: flex;
+  @if $flexDirection {
+    flex-direction: $flexDirection;
+  }
+  @if $justifyContent {
+    justify-content: $justifyContent;
+  }
+  @if $alignItems {
+    align-items: $alignItems;
+  }
+}
+
+@mixin posAbsNull() {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+@mixin contentQueryWidth() {
+  @media screen and (min-width: 320px) {
+    width: 100%;
+  }
+
+  @media screen and (min-width: 960px) {
+    max-width: 920px;
+  }
+
+  @media screen and (min-width: 1280px) {
+    max-width: 1240px;
+  }
+
+  @media screen and (min-width: 1920px) {
+    max-width: 1880px;
+  }
+}
+
+@mixin typography() {
+  font: 1em Arial, Helvetica, sans-serif;
+  line-height: 1.5em;
+}
+
+@mixin transition($background-color: false, $border-color: false, $color: false) {
+  transition: background-color 0.4s cubic-bezier(0.075, 0.82, 0.165, 1),
+    border-color 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+@mixin addTransitionForProp($properties...) {
+  $transition: ();
+  @each $property in $properties {
+    $transition: append(
+      $transition,
+      ($property 0.4s cubic-bezier(0.075, 0.82, 0.165, 1)),
+      $separator: comma
+    );
+  }
+  -webkit-transition: $transition;
+  -moz-transition: $transition;
+  -ms-transition: $transition;
+  -o-transition: $transition;
+  transition: $transition;
+}

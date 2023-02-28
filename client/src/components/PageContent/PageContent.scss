@@ -1,0 +1,19 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+@import './../../style/common-variables.scss';
+
+.page-content {
+  box-sizing: border-box;
+  @include flex(column, flex-start, center);
+  flex: 1 0 auto;
+  width: 100%;
+  min-height: calc(100vh - ($top-bottom-min-height * 2));
+  margin: 0 auto;
+  padding: $main-content-padding;
+  @include themify($themes) {
+    background-color: themed('pageBg');
+    color: themed('txtColor');
+  }
+  @include addTransitionForProp(background-color, color);
+  @include contentQueryWidth();
+}

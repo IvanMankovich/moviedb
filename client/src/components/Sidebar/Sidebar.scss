@@ -1,0 +1,38 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+
+.sidebar {
+  display: none;
+  position: relative;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex: 1 0;
+  min-height: 100vh;
+  @include themify($themes) {
+    background-color: themed('panelBg');
+    color: themed('txtColor');
+  }
+  @include addTransitionForProp(background-color, border-color);
+  @include typography();
+
+  @media screen and (min-width: 20rem) {
+    display: flex;
+    width: 4rem;
+    max-width: 4rem;
+    min-width: 4rem;
+  }
+
+  @media screen and (min-width: 50rem) {
+    width: 12rem;
+    max-width: 12rem;
+    min-width: 12rem;
+  }
+
+  &_active {
+    display: flex;
+    position: absolute;
+    width: 4rem;
+    height: 100%;
+  }
+}

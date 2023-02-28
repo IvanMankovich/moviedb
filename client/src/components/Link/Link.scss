@@ -1,0 +1,13 @@
+@import './../../style/theme-variables.scss';
+
+a {
+  @include themify($themes) {
+    color: themed('txtClr');
+  }
+
+  &:visited {
+    @include themify($themes) {
+      color: themed('txtDisClr');
+    }
+  }
+}

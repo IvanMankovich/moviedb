@@ -1,0 +1,18 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+
+.main-content {
+  @include flex(column, flex-start, center);
+  flex: 1 0;
+  min-width: 100%;
+  min-height: 100vh;
+  width: 100%;
+
+  @media screen and (min-width: 20rem) {
+    min-width: calc(100% - 4rem);
+  }
+
+  @media screen and (min-width: 50rem) {
+    min-width: calc(100% - 12rem);
+  }
+}

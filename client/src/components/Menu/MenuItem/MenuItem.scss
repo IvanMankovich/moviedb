@@ -1,0 +1,28 @@
+@import './../../../style/theme-variables.scss';
+@import './../../../style/mixins.scss';
+@import './../../../style/common-variables.scss';
+
+.menu-item {
+  box-sizing: border-box;
+  height: $top-bottom-min-height;
+  border: $btn-bd-thickness solid;
+  @include addTransitionForProp(background-color, border-color);
+  @include typography();
+  cursor: pointer;
+  padding-inline-start: 0;
+  list-style: none;
+  @include themify($themes) {
+    background-color: themed('menuItemBg');
+    border-color: themed('menuItemBd');
+    color: themed('txtColor');
+  }
+
+  &:hover {
+    @include themify($themes) {
+      background-color: themed('menuItemBgHov');
+      border-color: themed('menuItemBdHov');
+      color: themed('txtColor');
+    }
+    @include addTransitionForProp(background-color, border-color);
+  }
+}

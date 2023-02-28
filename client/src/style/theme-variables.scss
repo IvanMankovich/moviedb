@@ -1,0 +1,93 @@
+@import './colors.scss';
+
+$themes: (
+  light: (
+    backdrop: $white-05,
+    txtClr: $white,
+    txtDisClr: $coal-100,
+
+    layoutBg: $autumn-sky-700,
+
+    btnBg: $autumn-sky-500,
+    btnBd: $autumn-sky-500,
+    btnBgHov: $autumn-sky-700,
+    btnBdHov: $autumn-sky-700,
+    btnContent: $autumn-sky-900,
+
+    btnBgTp: $transparent,
+    btnBdTp: $transparent,
+    btnBgTpHov: $black-025,
+    btnBdTpHov: $transparent,
+
+    btnBdBor: $autumn-sky-900,
+    btnBdBorHov: $autumn-sky-900,
+
+    panelBg: $white-025,
+
+    menuItemBg: $white-025,
+    menuItemBd: $transparent,
+    menuItemBgHov: $white-05,
+    menuItemBdHov: $transparent,
+    pageBg: $chalk-100,
+
+    modalBg: $autumn-sky-700,
+    modalBd: $autumn-sky-100,
+    transparent: $transparent,
+  ),
+  dark: (
+    backdrop: $black-05,
+    txtClr: $black,
+    txtDisClr: $coal-500,
+
+    layoutBg: $autumn-leaf-700,
+
+    btnBg: $autumn-leaf-500,
+    btnBd: $autumn-leaf-500,
+    btnBgHov: $autumn-leaf-700,
+    btnBdHov: $autumn-leaf-700,
+    btnContent: $autumn-leaf-900,
+
+    btnBgTp: $transparent,
+    btnBdTp: $transparent,
+    btnBgTpHov: $white-025,
+    btnBdTpHov: $transparent,
+
+    btnBdBor: $autumn-leaf-900,
+    btnBdBorHov: $autumn-leaf-900,
+
+    panelBg: $black-025,
+
+    menuItemBg: $black-025,
+    menuItemBd: $transparent,
+    menuItemBgHov: $black-05,
+    menuItemBdHov: $transparent,
+    pageBg: $chalk-500,
+
+    modalBg: $autumn-leaf-700,
+    modalBd: $autumn-leaf-100,
+    transparent: $transparent,
+  ),
+);
+
+@mixin themify($themes) {
+  @each $theme, $map in $themes {
+    .theme-#{$theme} & {
+      $theme-map: () !global;
+      @each $key, $submap in $map {
+        $value: map-get(map-get($themes, $theme), '#{$key}');
+        $theme-map: map-merge(
+          $theme-map,
+          (
+            $key: $value,
+          )
+        ) !global;
+      }
+      @content;
+      $theme-map: null !global;
+    }
+  }
+}
+
+@function themed($key) {
+  @return map-get($theme-map, $key);
+}

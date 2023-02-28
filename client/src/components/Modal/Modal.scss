@@ -1,0 +1,62 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+@import './../../style/common-variables.scss';
+
+.modal {
+  width: 100%;
+  max-height: 90%;
+  overflow-y: auto;
+  margin: 0 auto;
+  @include themify($themes) {
+    background-color: themed('modalBg');
+    border-color: themed('modalBd');
+  }
+  @include typography();
+  border: $modal-border-thickness solid;
+  border-radius: $modal-border-radius;
+
+  @media screen and (min-width: 320px) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: auto;
+    transform: translate(-50%, -50%);
+    border-radius: $board-border-radius;
+  }
+
+  @include responsiveWidth(100%);
+}
+
+.modal-header,
+.modal-content {
+  @include flex(column, center, center);
+
+  > p {
+    margin: 0;
+  }
+}
+
+.modal-header {
+  min-height: $top-bottom-min-height;
+}
+
+.modal-content {
+  box-sizing: border-box;
+  padding: $main-content-padding;
+  width: 100%;
+  border-top: $modal-border-thickness solid;
+  @include themify($themes) {
+    border-color: themed('modalBd');
+  }
+}
+
+.modal-bar {
+  box-sizing: border-box;
+  @include flex(row, space-around, center);
+  width: 100%;
+  padding: $main-content-padding;
+  border-top: $modal-border-thickness solid;
+  @include themify($themes) {
+    border-color: themed('modalBd');
+  }
+}
