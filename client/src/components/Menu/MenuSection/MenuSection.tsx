@@ -13,7 +13,7 @@ export const MenuSection = ({ id, menuItems }: IMenuSection): JSX.Element => {
     <ul className='menu-section' id={id}>
       {menuItems.map(
         (item: IMenuItem): ReactNode => (
-          <MenuItem key={item.id} id={item.id} content={item.content} />
+          <MenuItem key={item.id} {...item} />
         ),
       )}
     </ul>
