@@ -2,9 +2,9 @@ import React from 'react';
 import { Layout } from './components/Layout/Layout';
 import { PageContent } from './components/PageContent/PageContent';
 import { Theme } from './types/types';
+import { Button, ButtonStyle } from './components/Button/Button';
 
 import './App.scss';
-import { Button, ButtonStyle } from './components/Button/Button';
 
 function App(): JSX.Element {
   return (

@@ -1,38 +1,36 @@
 @import './../../style/theme-variables.scss';
 @import './../../style/mixins.scss';
+@import './../../style/common-variables.scss';
 
 .sidebar {
   display: none;
-  position: relative;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  position: absolute;
   flex: 1 0;
   min-height: 100vh;
   @include themify($themes) {
-    background-color: themed('panelBg');
+    background-color: themed('sidebarBg');
     color: themed('txtColor');
   }
   @include addTransitionForProp(background-color, border-color);
   @include typography();
 
   @media screen and (min-width: 20rem) {
-    display: flex;
-    width: 4rem;
-    max-width: 4rem;
-    min-width: 4rem;
+    @include flex(column, flex-start, flex-start);
+    flex: 1 0;
+    width: $sidebar-width;
+    max-width: $sidebar-width;
+    min-width: $sidebar-width;
+    @include themify($themes) {
+      background-color: themed('sidebarBgW');
+      color: themed('txtColor');
+    }
   }
 
-  @media screen and (min-width: 50rem) {
-    width: 12rem;
-    max-width: 12rem;
-    min-width: 12rem;
-  }
-
-  &_active {
-    display: flex;
+  &_menu-open {
+    @include flex(column, flex-start, flex-start);
+    flex: 1 0;
     position: absolute;
-    width: 4rem;
+    width: 100%;
     height: 100%;
   }
 }

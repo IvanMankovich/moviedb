@@ -4,14 +4,14 @@ $themes: (
   light: (
     backdrop: $white-05,
     txtClr: $white,
-    txtDisClr: $coal-100,
+    txtDisClr: $chalk-500,
 
     layoutBg: $autumn-sky-700,
 
-    btnBg: $autumn-sky-500,
-    btnBd: $autumn-sky-500,
-    btnBgHov: $autumn-sky-700,
-    btnBdHov: $autumn-sky-700,
+    btnBg: $autumn-sky-300,
+    btnBd: $autumn-sky-300,
+    btnBgHov: $autumn-sky-100,
+    btnBdHov: $autumn-sky-100,
     btnContent: $autumn-sky-900,
 
     btnBgTp: $transparent,
@@ -26,20 +26,29 @@ $themes: (
 
     menuItemBg: $white-025,
     menuItemBd: $transparent,
-    menuItemBgHov: $white-05,
+    menuItemBgHov: $white-075,
     menuItemBdHov: $transparent,
+
+    menuItemBgW: $white-025,
+    menuItemBdW: $transparent,
+    menuItemBgHovW: $white,
+    menuItemBdHovW: $transparent,
+
     pageBg: $chalk-100,
 
     modalBg: $autumn-sky-700,
     modalBd: $autumn-sky-100,
+
+    sidebarBg: $white-05,
+    sidebarBgW: $transparent,
     transparent: $transparent,
   ),
   dark: (
     backdrop: $black-05,
-    txtClr: $black,
-    txtDisClr: $coal-500,
+    txtClr: $white,
+    txtDisClr: $coal-100,
 
-    layoutBg: $autumn-leaf-700,
+    layoutBg: $black-075,
 
     btnBg: $autumn-leaf-500,
     btnBd: $autumn-leaf-500,
@@ -61,10 +70,19 @@ $themes: (
     menuItemBd: $transparent,
     menuItemBgHov: $black-05,
     menuItemBdHov: $transparent,
+
+    menuItemBgW: $black-025,
+    menuItemBdW: $transparent,
+    menuItemBgHovW: $black,
+    menuItemBdHovW: $transparent,
+
     pageBg: $chalk-500,
 
     modalBg: $autumn-leaf-700,
     modalBd: $autumn-leaf-100,
+
+    sidebarBg: $white-05,
+    sidebarBgW: $transparent,
     transparent: $transparent,
   ),
 );

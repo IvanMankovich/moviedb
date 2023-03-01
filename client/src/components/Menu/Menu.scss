@@ -1,6 +1,25 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+@import './../../style/common-variables.scss';
+
 .menu {
   height: 100%;
   width: 100%;
   margin: 0;
   padding-inline-start: 0;
+  @include flex(column, flex-start, stretch);
+  flex-wrap: nowrap;
+  backdrop-filter: blur(0.2rem);
+
+  @media screen and (min-width: 20rem) {
+    width: calc(($sidebar-width / 4) * 3);
+    height: auto;
+    margin: 1rem auto 0;
+    padding: calc($sidebar-width / 8);
+    border-radius: calc($sidebar-width / 2);
+
+    @include themify($themes) {
+      background-color: themed('menuItemBg');
+    }
+  }
 }

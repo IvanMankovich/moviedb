@@ -21,7 +21,7 @@ export const Layout = ({ children, showModal, theme }: ILayout): JSX.Element => 
   return (
     <div className={`theme-${theme}`}>
       <div className={`layout${showModal ? ' blur' : ''}`}>
-        <Sidebar>
+        <Sidebar menuOpen={true}>
           <>
             <Logo />
             <Menu menuSections={menuSections} />
