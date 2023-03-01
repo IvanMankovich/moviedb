@@ -19,7 +19,9 @@ $themes: (
     btnBgTpHov: $black-025,
     btnBdTpHov: $transparent,
 
+    btnBgBor: $autumn-sky-300,
     btnBdBor: $autumn-sky-900,
+    btnBgBorHov: $autumn-sky-100,
     btnBdBorHov: $autumn-sky-900,
 
     panelBg: $white-025,
@@ -42,6 +44,15 @@ $themes: (
     sidebarBg: $white-05,
     sidebarBgW: $transparent,
     transparent: $transparent,
+
+    autocompleteListBg: $white,
+    autocompleteListBd: $white,
+    autocompleteListItemBg: $transparent,
+    autocompleteListItemBd: $transparent,
+    autocompleteListItemTxt: $black,
+    autocompleteListItemBgHov: $black-025,
+    autocompleteListItemBdHov: $black-025,
+    autocompleteListItemTxtHov: $black,
   ),
   dark: (
     backdrop: $black-05,
@@ -84,6 +95,15 @@ $themes: (
     sidebarBg: $white-05,
     sidebarBgW: $transparent,
     transparent: $transparent,
+
+    autocompleteListBg: $white,
+    autocompleteListBd: $white,
+    autocompleteListItemBg: $transparent,
+    autocompleteListItemBd: $transparent,
+    autocompleteListItemTxt: $black,
+    autocompleteListItemBgHov: $transparent,
+    autocompleteListItemBdHov: $transparent,
+    autocompleteListItemTxtHov: $black-025,
   ),
 );
 

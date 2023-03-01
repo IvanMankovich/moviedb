@@ -1,11 +1,9 @@
-import React from 'react';
-import { ReactNode } from 'react';
-import './Button.scss';
+import React, { ReactNode } from 'react';
+import { getClassName } from '../helpers';
 
-export enum ButtonStyle {
-  bordered = 'bordered',
-  transparent = 'transparent',
-}
+import { ButtonStyle } from '../types';
+
+import './Button.scss';
 
 export interface IButton {
   content: ReactNode;
@@ -14,9 +12,11 @@ export interface IButton {
 }
 
 export const Button = ({ content, onClickHandler, type }: IButton) => {
-  const classname: string = type?.length ? type.map((type: string) => `btn_${type}`).join(' ') : '';
   return (
-    <button className={`btn ${classname}`} onClick={onClickHandler}>
+    <button
+      className={`btn${type?.length ? getClassName('btn', type) : ''}`}
+      onClick={onClickHandler}
+    >
       {content}
     </button>
   );
