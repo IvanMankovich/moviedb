@@ -3,11 +3,12 @@ import { MenuOutlined } from '@ant-design/icons';
 import { Button as AtndButton } from 'antd';
 import { PersonIcon } from '../Icon/PersonIcon/PersonIcon';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
+import { OpenedDrawer } from '../Layout/Layout';
 
 import './Header.scss';
 
 export interface IHeader {
-  setOpen: React.Dispatch<React.SetStateAction<'mob' | 'user' | null>>;
+  setOpen: React.Dispatch<React.SetStateAction<OpenedDrawer | null>>;
 }
 
 export const Header = ({ setOpen }: IHeader): JSX.Element => {
@@ -19,7 +20,7 @@ export const Header = ({ setOpen }: IHeader): JSX.Element => {
           type={'text'}
           icon={<MenuOutlined />}
           size={'large'}
-          onClick={() => setOpen('mob')}
+          onClick={() => setOpen(OpenedDrawer.mobileMainMenu)}
         />
         <AtndButton
           className='logo-btn'
@@ -33,10 +34,8 @@ export const Header = ({ setOpen }: IHeader): JSX.Element => {
           type={'text'}
           icon={<PersonIcon />}
           size={'large'}
-          onClick={() => setOpen('user')}
+          onClick={() => setOpen(OpenedDrawer.userMenu)}
         />
-        {/* <div className='header__left-block'></div>
-        <div className='header__right-block'></div> */}
       </div>
     </header>
   );
