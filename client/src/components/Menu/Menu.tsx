@@ -1,5 +1,4 @@
-import React, { ReactNode } from 'react';
-import { IMenuSection, MenuSection } from './MenuSection/MenuSection';
+import React from 'react';
 import { Menu as AntdMenu } from 'antd';
 
 import { TrendingUpIcon } from '../Icon/TrendingUpIcon/TrendingUpIcon';
@@ -8,22 +7,11 @@ import { StarIcon } from '../Icon/StarIcon/StarIcon';
 import { MovieFilterIcon } from '../Icon/MovieFilterIcon/MovieFilterIcon';
 import { FavoriteIcon } from '../Icon/FavoriteIcon/FavoriteIcon';
 import { SearchIcon } from '../Icon/SearchIcon/SearchIcon';
-import { CloseIcon } from '../Icon/CloseIcon/CloseIcon';
-import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
 import { HomeIcon } from '../Icon/HomeIcon/HomeIcon';
 
+import { IMenuItem } from '../types';
+
 import './Menu.scss';
-
-export interface IMenu {
-  menuSections: IMenuSection[];
-}
-
-export interface IMenuItem {
-  label: ReactNode;
-  key: string;
-  icon?: ReactNode;
-  onClick?(): void;
-}
 
 const menuItems: IMenuItem[] = [
   {
@@ -48,44 +36,63 @@ const menuItems: IMenuItem[] = [
       </>
     ),
   },
-  // {
-  //   key: 'trend',
-  //   label: 'Trend',
-  //   icon: <TrendingUpIcon />,
-  // },
-  // {
-  //   key: 'recommended',
-  //   label: 'Recommendations',
-  //   icon: <RecommendedIcon />,
-  // },
-  // {
-  //   key: 'topRated',
-  //   label: 'Top rated',
-  //   icon: <StarIcon />,
-  // },
-  // {
-  //   key: 'catalogue',
-  //   label: 'Catalogue',
-  //   icon: <MovieFilterIcon />,
-  // },
-  // {
-  //   key: 'myFav',
-  //   label: 'My favorites',
-  //   icon: <FavoriteIcon />,
-  // },
+  {
+    key: 'trend',
+    label: (
+      <>
+        <div className='menu-item__icon'>
+          <TrendingUpIcon />
+        </div>
+        <p className='menu-item__text'>Trend</p>
+      </>
+    ),
+  },
+  {
+    key: 'recommended',
+    label: (
+      <>
+        <div className='menu-item__icon'>
+          <RecommendedIcon />
+        </div>
+        <p className='menu-item__text'>Recommendations</p>
+      </>
+    ),
+  },
+  {
+    key: 'topRated',
+    label: (
+      <>
+        <div className='menu-item__icon'>
+          <StarIcon />
+        </div>
+        <p className='menu-item__text'>Top rated</p>
+      </>
+    ),
+  },
+  {
+    key: 'catalogue',
+    label: (
+      <>
+        <div className='menu-item__icon'>
+          <MovieFilterIcon />
+        </div>
+        <p className='menu-item__text'>Catalogue</p>
+      </>
+    ),
+  },
+  {
+    key: 'myFav',
+    label: (
+      <>
+        <div className='menu-item__icon'>
+          <FavoriteIcon />
+        </div>
+        <p className='menu-item__text'>My favorites</p>
+      </>
+    ),
+  },
 ];
 
-export const Menu = ({ menuSections }: IMenu): JSX.Element => {
-  // const menuItems: IMenuItem[] = ;
-
-  return (
-    <AntdMenu className='side-menu' mode={'vertical'} theme={'light'} items={menuItems} />
-    // <section className='menu'>
-    //   {menuSections.map(
-    //     (item: IMenuSection): ReactNode => (
-    //       <MenuSection key={item.id} id={item.id} menuItems={item.menuItems} />
-    //     ),
-    //   )}
-    // </section>
-  );
+export const Menu = (): JSX.Element => {
+  return <AntdMenu className='side-menu' mode={'vertical'} theme={'light'} items={menuItems} />;
 };

@@ -2,33 +2,10 @@
 @import './../../style/mixins.scss';
 @import './../../style/common-variables.scss';
 
-// .menu {
-//   height: 100%;
-//   width: 100%;
-//   margin: 0;
-//   padding-inline-start: 0;
-//   @include flex(column, flex-start, stretch);
-//   flex-wrap: nowrap;
-//   backdrop-filter: blur(0.2rem);
-
-//   @media screen and (min-width: 20rem) {
-//     width: calc(($sidebar-width / 4) * 3);
-//     height: auto;
-//     margin: 1rem auto 0;
-//     padding: calc($sidebar-width / 8);
-//     border-radius: calc($sidebar-width / 2);
-
-//     @include themify($themes) {
-//       background-color: themed('menuItemBg');
-//     }
-//   }
-// }
-
 .side-menu {
   width: $sidebar-width;
   margin: 0 auto;
   padding: calc($sidebar-width / 8);
-  // border-radius: calc($sidebar-width / 2);
   height: calc(100% - 2.5rem);
   padding: 0.5rem;
   display: flex;
@@ -42,6 +19,7 @@
     width: calc(($sidebar-width / 4) * 3);
     height: calc(($sidebar-width / 4) * 3);
     padding-inline: 0 !important;
+    @include addTransitionForProp(width, background-color, border-color);
 
     > .ant-menu-title-content {
       display: inline-block;
@@ -53,6 +31,10 @@
       overflow: visible;
       width: fit-content;
       backdrop-filter: blur(0.2rem);
+      @include themify($themes) {
+        background-color: themed('menuItemBgHov') !important;
+      }
+      @include addTransitionForProp(width, background-color, border-color);
 
       > .ant-menu-title-content {
         display: flex;

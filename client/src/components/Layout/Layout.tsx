@@ -4,17 +4,14 @@ import { Header } from '../Header/Header';
 import { Theme } from '../../types/types';
 import { Sidebar } from '../Sidebar/Sidebar';
 import { Main } from '../Main/Main';
-import { Logo } from '../Logo/Logo';
 import { Menu } from '../Menu/Menu';
-
-import { Button as AtndButton, Drawer, Space } from 'antd';
-
-import './Layout.scss';
-
-import { menuSections } from '../../mock/mock';
 import { MobileMenuDrawer } from '../MobileMenuDrawer/MobileMenuDrawer';
 import { UserMenuDrawer } from '../UserMenuDrawer/UserMenuDrawer';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
+
+import { Button as AtndButton } from 'antd';
+
+import './Layout.scss';
 
 export interface ILayout {
   children: ReactNode;
@@ -22,8 +19,13 @@ export interface ILayout {
   theme: Theme;
 }
 
+export enum OpenedDrawer {
+  mobileMainMenu = 'mobileMainMenu',
+  userMenu = 'userMenu',
+}
+
 export const Layout = ({ children, theme }: ILayout): JSX.Element => {
-  const [open, setOpen] = useState<'mob' | 'user' | null>(null);
+  const [open, setOpen] = useState<OpenedDrawer | null>(null);
 
   const onClose = () => {
     setOpen(null);
@@ -32,8 +34,8 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
   return (
     <div className={`theme-${theme}`}>
       <div className={`layout`}>
-        <MobileMenuDrawer open={open === 'mob'} onClose={onClose} />
-        <UserMenuDrawer open={open === 'user'} onClose={onClose} />
+        <MobileMenuDrawer open={open === OpenedDrawer.mobileMainMenu} onClose={onClose} />
+        <UserMenuDrawer open={open === OpenedDrawer.userMenu} onClose={onClose} />
         <Sidebar menuOpen={false}>
           <>
             <AtndButton
@@ -44,7 +46,7 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
               size={'large'}
               onClick={onClose}
             ></AtndButton>
-            <Menu menuSections={menuSections} />
+            <Menu />
           </>
         </Sidebar>
         <Main>
