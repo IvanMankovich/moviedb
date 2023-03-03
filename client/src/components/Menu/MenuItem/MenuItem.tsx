@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react';
 import './MenuItem.scss';
 
+import { Menu } from 'antd';
+
 export interface IMenuItem {
   id: string;
   text?: string;
@@ -10,9 +12,13 @@ export interface IMenuItem {
 
 export const MenuItem = ({ text, icon, onClick }: IMenuItem) => {
   return (
-    <li className='menu-item' onClick={onClick}>
+    <Menu.Item className='menu-item'>
       {text ? <p className='menu-item__text'>{text}</p> : null}
       {icon ? <div className='menu-item__icon'>{icon}</div> : null}
-    </li>
+    </Menu.Item>
+    // <li className='menu-item' onClick={onClick}>
+    //   {text ? <p className='menu-item__text'>{text}</p> : null}
+    //   {icon ? <div className='menu-item__icon'>{icon}</div> : null}
+    // </li>
   );
 };

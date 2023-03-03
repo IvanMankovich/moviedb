@@ -2,24 +2,80 @@
 @import './../../style/mixins.scss';
 @import './../../style/common-variables.scss';
 
-.menu {
-  height: 100%;
-  width: 100%;
-  margin: 0;
-  padding-inline-start: 0;
-  @include flex(column, flex-start, stretch);
-  flex-wrap: nowrap;
-  backdrop-filter: blur(0.2rem);
+// .menu {
+//   height: 100%;
+//   width: 100%;
+//   margin: 0;
+//   padding-inline-start: 0;
+//   @include flex(column, flex-start, stretch);
+//   flex-wrap: nowrap;
+//   backdrop-filter: blur(0.2rem);
 
-  @media screen and (min-width: 20rem) {
+//   @media screen and (min-width: 20rem) {
+//     width: calc(($sidebar-width / 4) * 3);
+//     height: auto;
+//     margin: 1rem auto 0;
+//     padding: calc($sidebar-width / 8);
+//     border-radius: calc($sidebar-width / 2);
+
+//     @include themify($themes) {
+//       background-color: themed('menuItemBg');
+//     }
+//   }
+// }
+
+.side-menu {
+  width: $sidebar-width;
+  margin: 0 auto;
+  padding: calc($sidebar-width / 8);
+  // border-radius: calc($sidebar-width / 2);
+  height: calc(100% - 2.5rem);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+
+  @include themify($themes) {
+    background-color: themed('menuItemBg');
+  }
+
+  > li {
     width: calc(($sidebar-width / 4) * 3);
-    height: auto;
-    margin: 1rem auto 0;
-    padding: calc($sidebar-width / 8);
-    border-radius: calc($sidebar-width / 2);
+    height: calc(($sidebar-width / 4) * 3);
+    padding-inline: 0 !important;
 
-    @include themify($themes) {
-      background-color: themed('menuItemBg');
+    > .ant-menu-title-content {
+      display: inline-block;
+      height: 100%;
+    }
+
+    &:hover,
+    &:focus {
+      overflow: visible;
+      width: fit-content;
+      backdrop-filter: blur(0.2rem);
+
+      > .ant-menu-title-content {
+        display: flex;
+        height: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        width: fit-content;
+        overflow: visible;
+      }
+      p.menu-item__text {
+        display: inline-block;
+      }
+    }
+
+    p.menu-item__text {
+      display: none;
+      padding: 0 0.5rem;
+    }
+
+    div.menu-item__icon {
+      display: inline-block;
+      height: 100%;
     }
   }
 }

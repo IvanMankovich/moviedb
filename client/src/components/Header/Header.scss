@@ -25,4 +25,15 @@
   margin: 0 auto;
   padding: 0;
   @include contentQueryWidth();
+
+  @media screen and (min-width: 20rem) {
+    justify-content: flex-end;
+  }
+
+  .mob-menu-btn,
+  .logo-btn {
+    @media screen and (min-width: 20rem) {
+      display: none;
+    }
+  }
 }

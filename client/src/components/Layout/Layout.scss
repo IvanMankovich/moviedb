@@ -18,3 +18,8 @@
 .blur {
   filter: blur(0.4rem);
 }
+
+.ant-drawer-content-wrapper {
+  width: 100% !important;
+  max-width: 20rem;
+}
