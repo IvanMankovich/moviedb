@@ -10,9 +10,6 @@
 
   @media screen and (min-width: 20rem) {
     min-width: calc(100% - 4rem);
-  }
-
-  @media screen and (min-width: 50rem) {
-    min-width: calc(100% - 12rem);
+    width: calc(100% - 4rem);
   }
 }

@@ -1,0 +1,17 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+
+.mobile-menu-drawer {
+  header {
+    @include flex(row, space-between, center);
+    padding: 0 0.2rem;
+  }
+
+  .menu {
+    height: auto;
+  }
+
+  .ant-drawer-body {
+    padding: 0;
+  }
+}

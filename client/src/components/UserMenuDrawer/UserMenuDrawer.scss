@@ -1,0 +1,18 @@
+@import './../../style/theme-variables.scss';
+@import './../../style/mixins.scss';
+
+.user-menu-drawer {
+  max-width: 20rem;
+  header {
+    @include flex(row, space-between, center);
+    padding: 0 0.2rem;
+  }
+
+  .menu {
+    height: auto;
+  }
+
+  .ant-drawer-body {
+    padding: 0;
+  }
+}

@@ -50,7 +50,7 @@
     flex-direction: row-reverse;
     height: calc(($sidebar-width / 4) * 3);
     width: calc(($sidebar-width / 4) * 3);
-    border-radius: 50%;
+    border-radius: calc((($sidebar-width / 4) * 3) / 2);
     backdrop-filter: blur(0.2rem);
     @include addTransitionForProp(background-color, border-color, width, border-radius);
 
