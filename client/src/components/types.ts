@@ -10,4 +10,5 @@ export interface IMenuItem {
   key: string;
   icon?: ReactNode;
   onClick?(): void;
+  path?: string;
 }

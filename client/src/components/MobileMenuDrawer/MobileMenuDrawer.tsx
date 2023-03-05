@@ -1,70 +1,24 @@
-import React, { useState, useEffect, ReactNode } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Drawer, Button as AtndButton, Menu as AntdMenu } from 'antd';
-import { TrendingUpIcon } from '../Icon/TrendingUpIcon/TrendingUpIcon';
-import { RecommendedIcon } from '../Icon/RecommendedIcon/RecommendedIcon';
-import { StarIcon } from '../Icon/StarIcon/StarIcon';
-import { MovieFilterIcon } from '../Icon/MovieFilterIcon/MovieFilterIcon';
-import { FavoriteIcon } from '../Icon/FavoriteIcon/FavoriteIcon';
-import { SearchIcon } from '../Icon/SearchIcon/SearchIcon';
 import { CloseIcon } from '../Icon/CloseIcon/CloseIcon';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
-import { HomeIcon } from '../Icon/HomeIcon/HomeIcon';
+
+import { IMenuItem } from '../types';
 
 import './MobileMenuDrawer.scss';
 
 export interface IMobileMenuDrawer {
   onClose(): void;
   open: boolean;
+  menuItems: IMenuItem[];
 }
 
-export interface IMenuItem {
-  label: ReactNode;
-  key: string;
-  icon?: ReactNode;
-  onClick?(): void;
-}
-
-const menuItems: IMenuItem[] = [
-  {
-    key: 'home',
-    label: 'Home',
-    icon: <HomeIcon />,
-  },
-  {
-    key: 'search',
-    label: 'Search',
-    icon: <SearchIcon />,
-  },
-  {
-    key: 'trend',
-    label: 'Trend',
-    icon: <TrendingUpIcon />,
-  },
-  {
-    key: 'recommended',
-    label: 'Recommendations',
-    icon: <RecommendedIcon />,
-  },
-  {
-    key: 'topRated',
-    label: 'Top rated',
-    icon: <StarIcon />,
-  },
-  {
-    key: 'catalogue',
-    label: 'Catalogue',
-    icon: <MovieFilterIcon />,
-  },
-  {
-    key: 'myFav',
-    label: 'My favorites',
-    icon: <FavoriteIcon />,
-  },
-];
-
-export const MobileMenuDrawer = ({ onClose, open }: IMobileMenuDrawer) => {
+export const MobileMenuDrawer = ({ onClose, open, menuItems }: IMobileMenuDrawer) => {
   const [width, setWidth] = useState(window.innerWidth);
+
+  const navigate = useNavigate();
 
   const handleResize = () => {
     setWidth(window.innerWidth);
@@ -96,11 +50,14 @@ export const MobileMenuDrawer = ({ onClose, open }: IMobileMenuDrawer) => {
         <AtndButton
           className='logo-btn'
           type={'link'}
-          href='/'
           icon={<MovieIcon />}
           size={'large'}
-          onClick={onClose}
+          onClick={() => {
+            onClose();
+            navigate('/');
+          }}
         ></AtndButton>
+
         <AtndButton
           className='close-menu-btn'
           type={'text'}
@@ -109,7 +66,7 @@ export const MobileMenuDrawer = ({ onClose, open }: IMobileMenuDrawer) => {
           onClick={onClose}
         ></AtndButton>
       </header>
-      <AntdMenu mode={'vertical'} theme={'light'} items={menuItems} />
+      <AntdMenu className='mobile-menu' mode={'vertical'} theme={'light'} items={menuItems} />
     </Drawer>
   );
 };
