@@ -36,4 +36,11 @@
       display: none;
     }
   }
+
+  .user-menu-btn {
+    padding: 0;
+    .ant-avatar {
+      background-color: transparent;
+    }
+  }
 }

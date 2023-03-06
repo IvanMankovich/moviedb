@@ -15,4 +15,27 @@
   .ant-drawer-body {
     padding: 0;
   }
+
+  .ant-list-item-meta {
+    @include flex(row, flex-start, center);
+    padding: 0 1rem;
+
+    .ant-list-item-meta-content {
+      margin-left: 0.5rem;
+    }
+  }
+
+  .user-menu > li.ant-menu-item > .ant-menu-title-content {
+    @include flex(row, space-between, center);
+    height: 100%;
+
+    div.menu-item__icon {
+      height: 100%;
+    }
+
+    p.menu-item__text {
+      width: auto;
+      margin: auto;
+    }
+  }
 }

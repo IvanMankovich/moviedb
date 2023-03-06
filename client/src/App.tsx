@@ -16,6 +16,7 @@ import { FavoritesPage } from './pages/Favorites/FavoritesPage';
 import { Theme } from './types/types';
 
 import './App.scss';
+import { RegisterPage } from './pages/Register/RegisterPage';
 
 function App(): JSX.Element {
   return (
@@ -23,7 +24,7 @@ function App(): JSX.Element {
       <Route
         path='/'
         element={
-          <Layout showModal={false} theme={Theme.light}>
+          <Layout theme={Theme.light}>
             <PageContent>{<Outlet />}</PageContent>
           </Layout>
         }
@@ -35,6 +36,7 @@ function App(): JSX.Element {
         <Route path='recommedations' element={<RecommendationsPage />} />
         <Route path='catalogue' element={<CataloguePage />} />
         <Route path='favorites' element={<FavoritesPage />} />
+        <Route path='register' element={<RegisterPage />} />
 
         <Route path='*' element={<NotFoundPage />} />
       </Route>

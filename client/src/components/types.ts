@@ -12,3 +12,10 @@ export interface IMenuItem {
   onClick?(): void;
   path?: string;
 }
+
+export interface IUserData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  avatarSrc: string;
+}
