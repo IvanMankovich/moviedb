@@ -49,7 +49,7 @@ export const MobileMenuDrawer = ({ onClose, open, menuItems }: IMobileMenuDrawer
       <header>
         <AtndButton
           className='logo-btn'
-          type={'link'}
+          type={'text'}
           icon={<MovieIcon />}
           size={'large'}
           onClick={() => {
@@ -66,7 +66,13 @@ export const MobileMenuDrawer = ({ onClose, open, menuItems }: IMobileMenuDrawer
           onClick={onClose}
         ></AtndButton>
       </header>
-      <AntdMenu className='mobile-menu' mode={'vertical'} theme={'light'} items={menuItems} />
+      <AntdMenu
+        className='mobile-menu'
+        mode={'vertical'}
+        theme={'light'}
+        items={menuItems}
+        selectable={false}
+      />
     </Drawer>
   );
 };

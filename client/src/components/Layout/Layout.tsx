@@ -11,16 +11,16 @@ import { MobileMenuDrawer } from '../MobileMenuDrawer/MobileMenuDrawer';
 import { UserMenuDrawer } from '../UserMenuDrawer/UserMenuDrawer';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
 
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 
 import { mainMenuItems } from '../../constants/mainMenuItems';
 import { IMenuItem } from '../types';
 
 import './Layout.scss';
+// import { userData } from '../../mock/mock';
 
 export interface ILayout {
   children: ReactNode;
-  showModal: ReactNode | null;
   theme: Theme;
 }
 
@@ -29,8 +29,16 @@ export enum OpenedDrawer {
   userMenu = 'userMenu',
 }
 
+export interface IModal {
+  title?: string;
+  modalContent?: ReactNode;
+  onCancel?: () => void;
+  footer?: ReactNode[] | null;
+}
+
 export const Layout = ({ children, theme }: ILayout): JSX.Element => {
   const [open, setOpen] = useState<OpenedDrawer | null>(null);
+  const [modal, setModal] = useState<IModal | null>(null);
 
   const onClose = () => {
     setOpen(null);
@@ -58,25 +66,43 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
           onClose={onClose}
           menuItems={parsedMainMenuItems}
         />
-        <UserMenuDrawer open={open === OpenedDrawer.userMenu} onClose={onClose} />
+        <UserMenuDrawer
+          open={open === OpenedDrawer.userMenu}
+          onClose={onClose}
+          setModal={setModal}
+          // userData={userData}
+        />
         <Sidebar menuOpen={false}>
           <>
             <Button
               className='logo-btn'
               type={'text'}
-              href='/'
               icon={<MovieIcon />}
               size={'large'}
-              onClick={onClose}
+              onClick={() => {
+                navigate('/');
+                onClose();
+              }}
             ></Button>
             <Menu menuItems={parsedMainMenuItems} />
           </>
         </Sidebar>
         <Main>
-          <Header setOpen={setOpen} />
+          <Header
+            setOpen={setOpen}
+            // userData={userData}
+          />
           {children}
           <Footer />
         </Main>
+        <Modal
+          title={modal?.title}
+          open={modal ? true : false}
+          onCancel={() => setModal(null)}
+          footer={modal?.footer}
+        >
+          {modal?.modalContent}
+        </Modal>
       </div>
     </div>
   );

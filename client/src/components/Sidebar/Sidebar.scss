@@ -7,7 +7,6 @@
   position: absolute;
   flex: 1 0;
   min-height: calc(100vh - $top-bottom-min-height);
-  // margin-top: $top-bottom-min-height;
   @include themify($themes) {
     background-color: themed('sidebarBg');
     color: themed('txtColor');
@@ -17,26 +16,18 @@
 
   @media screen and (min-width: 20rem) {
     @include flex(column, flex-start, center);
-    position: static;
+    position: fixed;
+    z-index: 1;
+    top: 0;
 
     flex: 1 0;
     width: $sidebar-width;
     max-width: $sidebar-width;
     min-width: $sidebar-width;
-    // height: calc(100% - 5rem);
     height: 100vh;
     @include themify($themes) {
       background-color: themed('sidebarBgW');
       color: themed('txtColor');
     }
-  }
-
-  &_menu-open {
-    @include flex(column, flex-start, flex-start);
-    flex: 1 0;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
   }
 }
