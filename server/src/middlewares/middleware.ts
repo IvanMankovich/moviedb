@@ -4,16 +4,6 @@ import { User } from '../models/User';
 import { Movie } from '../models/Movie';
 import { NextFunction, Request, Response, Router } from 'express';
 
-const createContext = (req: any, res: Response, next: NextFunction) => {
-  req.context! = {
-    models: {
-      User,
-      Movie,
-    },
-  };
-  next();
-};
-
 const isLoggedIn = async (req: any, res: Response, next: NextFunction) => {
   try {
     if (req.headers.authorization) {
@@ -37,4 +27,4 @@ const isLoggedIn = async (req: any, res: Response, next: NextFunction) => {
   }
 };
 
-export { isLoggedIn, createContext };
+export { isLoggedIn };
