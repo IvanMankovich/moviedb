@@ -1,44 +1,39 @@
-import mongoose from 'mongoose';
-// import bycrypt from "bcryptjs";
-// import jwt from "jsonwebtoken";
-// import crypto from "crypto";
-// import { model, Schema, Model, Document } from "mongoose";
+import { model, Schema } from 'mongoose';
 
-interface IUser {
+export interface IUser {
   email: string;
   password: string;
+  userName: string;
+  favoriteGenres: Array<string>;
+  about: string;
 }
 
-interface userModelInterface extends mongoose.Model<UserDoc> {
-  build(attr: IUser): UserDoc;
-}
-
-interface UserDoc extends mongoose.Document {
-  email: string;
-  password: string;
-}
-
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   email: {
-    type: String,
+    type: Schema.Types.String,
+    unique: true,
     required: true,
     index: 1,
   },
   password: {
-    type: String,
+    type: Schema.Types.String,
     required: true,
+  },
+  userName: {
+    type: Schema.Types.String,
+    unique: true,
+    required: true,
+    index: 1,
+  },
+  favoriteGenres: {
+    type: [Schema.Types.String],
+    required: true,
+  },
+  about: {
+    type: Schema.Types.String,
   },
 });
 
-userSchema.statics.build = (attr: IUser) => {
-  return new User(attr);
-};
-
-const User = mongoose.model<UserDoc, userModelInterface>('User', userSchema);
-
-User.build({
-  email: 'some title',
-  password: 'some description',
-});
+const User = model('User', userSchema);
 
 export { User };
