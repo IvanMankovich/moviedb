@@ -1,11 +1,13 @@
 import { model, Schema } from 'mongoose';
 
 export interface IUser {
+  _id: string;
   email: string;
   password: string;
   userName: string;
   favoriteGenres: Array<string>;
   about: string;
+  refreshToken: string | null;
 }
 
 const userSchema = new Schema({
@@ -30,6 +32,9 @@ const userSchema = new Schema({
     required: true,
   },
   about: {
+    type: Schema.Types.String,
+  },
+  refreshToken: {
     type: Schema.Types.String,
   },
 });

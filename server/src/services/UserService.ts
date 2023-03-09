@@ -1,8 +1,15 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import * as dotenv from 'dotenv';
+
 import { User } from '../models/User';
 import { IUser } from '../models/User';
 import { ErrorService } from './ErrorService';
 import { getGIRegEx } from '../utils/helpers';
+
+dotenv.config();
+
+const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
 class UserService {
   async createUser(userData: IUser) {
@@ -35,6 +42,48 @@ class UserService {
       return errors;
     } else {
       return false;
+    }
+  }
+
+  async login(params: Pick<IUser, 'userName' | 'password'>) {
+    const user = await User.findOne({ userName: params.userName });
+    if (user) {
+      const match = await bcrypt.compare(params.password, user.password);
+      if (!match) {
+        throw ErrorService.UnauthorizedError('Wrong credentials', ['Wrong credentials']);
+      } else {
+        const { _id, userName, email } = user;
+        const accessToken = jwt.sign({ _id, userName, email }, ACCESS_TOKEN_SECRET!, {
+          expiresIn: '15s',
+        });
+        const refreshToken = jwt.sign({ _id, userName, email }, REFRESH_TOKEN_SECRET!, {
+          expiresIn: '1d',
+        });
+        user.refreshToken = refreshToken;
+        await user.save();
+        return {
+          refreshToken,
+          accessToken,
+        };
+      }
+    } else {
+      throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
+    }
+  }
+
+  async logout(refreshToken?: string) {
+    if (!refreshToken) {
+      throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
+    } else {
+      const user = await User.findOne({
+        refreshToken: refreshToken,
+      });
+      if (user) {
+        user.set('refreshToken', null);
+        await user.save();
+      } else {
+        throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
+      }
     }
   }
 }
