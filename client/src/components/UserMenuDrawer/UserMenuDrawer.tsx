@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ISetModal } from '../../store/modalStore';
+
 import { Drawer, Button, Menu as AntdMenu, List, Divider } from 'antd';
 
-import { IModal } from '../Layout/Layout';
 import { CloseIcon } from '../Icon/CloseIcon/CloseIcon';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
 import { LogoutIcon } from '../Icon/LogoutIcon/LogoutIcon';
@@ -23,7 +24,7 @@ export interface IUserMenuDrawer {
   onClose(): void;
   open: boolean;
   userData?: IUserData;
-  setModal: React.Dispatch<React.SetStateAction<IModal | null>>;
+  setModal: ISetModal;
 }
 
 export const UserMenuDrawer = ({ onClose, open, userData, setModal }: IUserMenuDrawer) => {

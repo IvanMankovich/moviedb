@@ -1,6 +1,8 @@
 import React, { useState, ReactNode } from 'react';
 import { To, useNavigate } from 'react-router-dom';
 
+import { useModalStore } from '../../store/modalStore';
+
 import { Footer } from '../Footer/Footer';
 import { Header } from '../Header/Header';
 import { Theme } from '../../types/types';
@@ -29,16 +31,10 @@ export enum OpenedDrawer {
   userMenu = 'userMenu',
 }
 
-export interface IModal {
-  title?: string;
-  modalContent?: ReactNode;
-  onCancel?: () => void;
-  footer?: ReactNode[] | null;
-}
-
 export const Layout = ({ children, theme }: ILayout): JSX.Element => {
   const [open, setOpen] = useState<OpenedDrawer | null>(null);
-  const [modal, setModal] = useState<IModal | null>(null);
+  const modal = useModalStore((state) => state.modal);
+  const setModal = useModalStore((state) => state.setModal);
 
   const onClose = () => {
     setOpen(null);
