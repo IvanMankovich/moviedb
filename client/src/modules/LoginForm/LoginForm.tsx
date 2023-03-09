@@ -1,17 +1,21 @@
 import React from 'react';
-
+import axios from 'axios';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 
 export interface ILoginFormData {
-  email: string;
+  // email: string;
   password: string;
-  remember: boolean;
+  userName: string;
+  // remember: boolean;
 }
 
 export const LoginForm = (): JSX.Element => {
-  const onFinish = (values: ILoginFormData) => {
+  const onFinish = async (values: ILoginFormData) => {
     console.log('Success:', values);
+    await axios.post('http://localhost:4000/user/login', {
+      ...values,
+    });
   };
 
   const onFinishFailed = (errorInfo: ValidateErrorEntity<ILoginFormData>) => {
@@ -29,10 +33,17 @@ export const LoginForm = (): JSX.Element => {
       onFinishFailed={onFinishFailed}
       autoComplete='off'
     >
-      <Form.Item
+      {/* <Form.Item
         label='Email'
         name='email'
         rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
+      >
+        <Input />
+      </Form.Item> */}
+      <Form.Item
+        label='Username'
+        name='userName'
+        rules={[{ required: true, message: 'Please input your username!' }]}
       >
         <Input />
       </Form.Item>

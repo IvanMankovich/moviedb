@@ -1,7 +1,7 @@
 import React from 'react';
-
-import { Button, DatePicker, Form, Input, Select, Typography } from 'antd';
 import moment from 'moment';
+
+import { Alert, Button, DatePicker, Form, Input, Select, Typography } from 'antd';
 
 import './RegisterUserForm.scss';
 
@@ -11,20 +11,29 @@ export interface IOption {
 }
 
 export interface IRegisterUserData {
-  about: string;
-  dob: string;
+  userName: string;
   email: string;
-  favoriteCategories: string[];
-  firstName: string;
-  lastName: string;
-  nickname: string;
+  password: string;
+  favoriteGenres: string[];
+  about: string;
+  dob?: Date;
 }
 
 export interface IRegisterFormData {
   user: IRegisterUserData;
 }
 
-export const RegisterUserForm = (): JSX.Element => {
+export interface IRegisterUserForm {
+  registerUser(values: IRegisterUserData): Promise<void>;
+  isLoading: boolean;
+  errorMsg: string;
+}
+
+export const RegisterUserForm = ({
+  registerUser,
+  isLoading,
+  errorMsg,
+}: IRegisterUserForm): JSX.Element => {
   const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
@@ -36,17 +45,10 @@ export const RegisterUserForm = (): JSX.Element => {
       email: '${label} is not a valid email!',
       number: '${label} is not a valid number!',
     },
-    number: {
-      range: '${label} must be between ${min} and ${max}',
-    },
-  };
-
-  const onFinish = (values: IRegisterFormData) => {
-    console.log(values);
   };
 
   const config = {
-    rules: [{ type: 'object' as const, required: true, message: 'Please select time!' }],
+    rules: [{ type: 'object' as const }],
   };
 
   const handleChange = (value: string[]) => {
@@ -65,48 +67,46 @@ export const RegisterUserForm = (): JSX.Element => {
   return (
     <>
       <Typography.Title level={3}>Register user form</Typography.Title>
-      <Typography.Text>
-        Already registered? <Typography.Link>Log in</Typography.Link>
-      </Typography.Text>
 
+      {errorMsg ? (
+        <Alert message={'Registration error'} description={errorMsg} type='error' />
+      ) : null}
       <Form
         {...layout}
         name='nest-messages'
-        onFinish={onFinish}
+        onFinish={registerUser}
         validateMessages={validateMessages}
         className='register-user-form'
+        disabled={isLoading}
       >
-        <Form.Item name={['user', 'firstName']} label='First Name' rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name={['user', 'lastName']} label='Last Name' rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item name={['user', 'nickname']} label='Nickname' rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
         <Form.Item
-          name={['user', 'email']}
-          label='Email'
-          rules={[{ required: true, type: 'email' }]}
-        >
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name={['user', 'favoriteCategories']}
-          label='I like:'
+          name={'userName'}
+          label='Username (it will be visible for others)'
           rules={[{ required: true }]}
         >
+          <Input />
+        </Form.Item>
+        <Form.Item name={'email'} label='Email' rules={[{ required: true, type: 'email' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label='Password'
+          name='password'
+          rules={[{ required: true, message: 'Please input your password!' }]}
+        >
+          <Input.Password />
+        </Form.Item>
+        <Form.Item name={'favoriteGenres'} label='I like:'>
           <Select
             mode='multiple'
             allowClear
             style={{ width: '100%' }}
-            placeholder='Please select'
+            placeholder='Select genre'
             onChange={handleChange}
             options={options}
           />
         </Form.Item>
-        <Form.Item name={['user', 'dob']} label='DoB' {...config}>
+        <Form.Item name={'dob'} label='DoB' {...config}>
           <DatePicker
             disabledDate={(current) => {
               const customDate = moment().format('YYYY-MM-DD');
@@ -114,7 +114,7 @@ export const RegisterUserForm = (): JSX.Element => {
             }}
           />
         </Form.Item>
-        <Form.Item name={['user', 'about']} label='About me'>
+        <Form.Item name={'about'} label='About me'>
           <Input.TextArea />
         </Form.Item>
         <Form.Item>
