@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import { Request, Response, Router } from 'express';
-import { userService } from '../services/UserService';
+import { userService } from '../services/UserService/UserService';
 import { ErrorService } from '../services/ErrorService';
 import { REFRESH_TOKEN_COOKIE_NAME, REFRESH_TOKEN_MAX_AGE } from '../const';
 
@@ -22,7 +22,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
 
 userRouter.post('/login', async (req: Request, res: Response) => {
   try {
-    const { refreshToken, accessToken } = await userService.login({
+    const { refreshToken, accessToken, userData } = await userService.login({
       userName: req.body.userName,
       password: req.body.password,
     });
@@ -30,7 +30,7 @@ userRouter.post('/login', async (req: Request, res: Response) => {
       httpOnly: true,
       maxAge: REFRESH_TOKEN_MAX_AGE,
     });
-    res.json({ accessToken });
+    res.json({ accessToken, userData });
   } catch (error) {
     if (error instanceof ErrorService) {
       res.status(error.status).json(error);

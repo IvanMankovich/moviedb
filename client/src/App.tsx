@@ -12,36 +12,40 @@ import { SearchPage } from './pages/Search/SearchPage';
 import { RecommendationsPage } from './pages/Recommendations/RecommendationsPage';
 import { TopRatedPage } from './pages/TopRated/TopRatedPage';
 import { FavoritesPage } from './pages/Favorites/FavoritesPage';
+import { RegisterPage } from './pages/Register/RegisterPage';
 
 import { Theme } from './types/types';
 
+import { AuthContextProvider } from './context/AuthContext';
+
 import './App.scss';
-import { RegisterPage } from './pages/Register/RegisterPage';
 
-function App(): JSX.Element {
+const App = (): JSX.Element => {
   return (
-    <Routes>
-      <Route
-        path='/'
-        element={
-          <Layout theme={Theme.light}>
-            <PageContent>{<Outlet />}</PageContent>
-          </Layout>
-        }
-      >
-        <Route index element={<HomePage />} />
-        <Route path='search' element={<SearchPage />} />
-        <Route path='trending' element={<TrendingPage />} />
-        <Route path='top-rated' element={<TopRatedPage />} />
-        <Route path='recommedations' element={<RecommendationsPage />} />
-        <Route path='catalogue' element={<CataloguePage />} />
-        <Route path='favorites' element={<FavoritesPage />} />
-        <Route path='register' element={<RegisterPage />} />
+    <AuthContextProvider>
+      <Routes>
+        <Route
+          path='/'
+          element={
+            <Layout theme={Theme.light}>
+              <PageContent>{<Outlet />}</PageContent>
+            </Layout>
+          }
+        >
+          <Route index element={<HomePage />} />
+          <Route path='search' element={<SearchPage />} />
+          <Route path='trending' element={<TrendingPage />} />
+          <Route path='top-rated' element={<TopRatedPage />} />
+          <Route path='recommedations' element={<RecommendationsPage />} />
+          <Route path='catalogue' element={<CataloguePage />} />
+          <Route path='favorites' element={<FavoritesPage />} />
+          <Route path='register' element={<RegisterPage />} />
 
-        <Route path='*' element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+          <Route path='*' element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </AuthContextProvider>
   );
-}
+};
 
 export default App;

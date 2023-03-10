@@ -1,6 +1,7 @@
 import React, { useState, ReactNode } from 'react';
 import { To, useNavigate } from 'react-router-dom';
 
+import { useAuthContext } from '../../hooks/useAuthContext';
 import { useModalStore } from '../../store/modalStore';
 
 import { Footer } from '../Footer/Footer';
@@ -19,7 +20,6 @@ import { mainMenuItems } from '../../constants/mainMenuItems';
 import { IMenuItem } from '../types';
 
 import './Layout.scss';
-// import { userData } from '../../mock/mock';
 
 export interface ILayout {
   children: ReactNode;
@@ -35,6 +35,7 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
   const [open, setOpen] = useState<OpenedDrawer | null>(null);
   const modal = useModalStore((state) => state.modal);
   const setModal = useModalStore((state) => state.setModal);
+  const { user } = useAuthContext();
 
   const onClose = () => {
     setOpen(null);
@@ -66,7 +67,7 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
           open={open === OpenedDrawer.userMenu}
           onClose={onClose}
           setModal={setModal}
-          // userData={userData}
+          userData={user}
         />
         <Sidebar menuOpen={false}>
           <>
@@ -84,10 +85,7 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
           </>
         </Sidebar>
         <Main>
-          <Header
-            setOpen={setOpen}
-            // userData={userData}
-          />
+          <Header setOpen={setOpen} userData={user} />
           {children}
           <Footer />
         </Main>

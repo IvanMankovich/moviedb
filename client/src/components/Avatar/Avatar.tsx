@@ -5,17 +5,15 @@ import { IUserData } from '../types';
 import { PersonIcon } from '../Icon/PersonIcon/PersonIcon';
 
 export interface IAvatar {
-  userData?: IUserData;
+  userData: IUserData | null;
 }
 
 export const Avatar = ({ userData }: IAvatar): JSX.Element => {
-  const userFullName: string = userData
-    ? `${userData?.firstName} ${userData?.lastName}`
-    : 'Unknown user';
+  const userFullName: string = userData ? userData?.userName : 'Unknown user';
 
   return (
-    <AntdAvatar icon={userData ? null : <PersonIcon />} src={userData ? userData?.avatarSrc : null}>
-      {userData && userData?.avatarSrc ? userData?.avatarSrc : userFullName.trim()[0]}
+    <AntdAvatar icon={userData ? null : <PersonIcon />} src={userData ? userData?.userPic : null}>
+      {userData && userData?.userPic ? userData?.userPic : userFullName?.trim?.()?.[0]}
     </AntdAvatar>
   );
 };
