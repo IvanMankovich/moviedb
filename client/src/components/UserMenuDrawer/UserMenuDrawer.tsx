@@ -19,16 +19,21 @@ import { LoginForm } from '../../modules/LoginForm/LoginForm';
 import { IMenuItem, IUserData } from '../types';
 
 import './UserMenuDrawer.scss';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { UserContextAction } from '../../context/AuthContext';
 
 export interface IUserMenuDrawer {
   onClose(): void;
   open: boolean;
-  userData?: IUserData;
+  userData: IUserData | null;
   setModal: ISetModal;
 }
 
 export const UserMenuDrawer = ({ onClose, open, userData, setModal }: IUserMenuDrawer) => {
   const navigate = useNavigate();
+  const { removeItem } = useLocalStorage();
+  const { dispatch } = useAuthContext();
 
   const menuItems: IMenuItem[] = userData
     ? [
@@ -71,7 +76,9 @@ export const UserMenuDrawer = ({ onClose, open, userData, setModal }: IUserMenuD
             </>
           ),
           onClick: () => {
-            alert('Logout');
+            removeItem('user');
+            removeItem('accessToken');
+            dispatch({ type: UserContextAction.logout, payload: null });
           },
         },
       ]
@@ -149,10 +156,7 @@ export const UserMenuDrawer = ({ onClose, open, userData, setModal }: IUserMenuD
       </header>
       {userData ? (
         <>
-          <List.Item.Meta
-            avatar={<Avatar userData={userData} />}
-            title={`${userData?.firstName} ${userData?.lastName}`}
-          />
+          <List.Item.Meta avatar={<Avatar userData={userData} />} title={userData?.userName} />
           <Divider />
         </>
       ) : null}

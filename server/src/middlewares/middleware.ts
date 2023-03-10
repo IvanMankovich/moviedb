@@ -1,8 +1,8 @@
-require('dotenv').config();
+import * as dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { User } from '../models/User';
-import { Movie } from '../models/Movie';
-import { NextFunction, Request, Response, Router } from 'express';
+import { NextFunction, Response } from 'express';
+
+dotenv.config();
 
 const isLoggedIn = async (req: any, res: Response, next: NextFunction) => {
   try {

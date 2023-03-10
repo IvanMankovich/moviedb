@@ -2,10 +2,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 
-import { User } from '../models/User';
-import { IUser } from '../models/User';
-import { ErrorService } from './ErrorService';
-import { getGIRegEx } from '../utils/helpers';
+import { User } from '../../models/User';
+import { IUser } from '../../models/User';
+import { ErrorService } from '../ErrorService';
+import { getGIRegEx } from '../../utils/helpers';
+import { UserDto } from './UserDto';
 
 dotenv.config();
 
@@ -60,8 +61,10 @@ class UserService {
           expiresIn: '1d',
         });
         user.refreshToken = refreshToken;
-        await user.save();
+        const updatedUser = (await user.save()).toObject() as IUser;
+        const userDto = new UserDto(updatedUser);
         return {
+          userData: userDto,
           refreshToken,
           accessToken,
         };

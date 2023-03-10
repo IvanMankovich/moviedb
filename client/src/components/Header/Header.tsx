@@ -1,4 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { MenuOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import { Avatar } from '../Avatar/Avatar';
@@ -8,11 +10,10 @@ import { OpenedDrawer } from '../Layout/Layout';
 import { IUserData } from '../types';
 
 import './Header.scss';
-import { useNavigate } from 'react-router-dom';
 
 export interface IHeader {
   setOpen: React.Dispatch<React.SetStateAction<OpenedDrawer | null>>;
-  userData?: IUserData;
+  userData: IUserData | null;
 }
 
 export const Header = ({ setOpen, userData }: IHeader): JSX.Element => {
