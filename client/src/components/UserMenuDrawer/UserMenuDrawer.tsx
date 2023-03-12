@@ -1,9 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ISetModal } from '../../store/modalStore';
-
 import { Drawer, Button, Menu as AntdMenu, List, Divider } from 'antd';
+
+import { ISetModal } from '../../store/modalStore';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useAuthContext } from '../../hooks/useAuthContext';
+import { UserContextAction } from '../../context/AuthContext';
 
 import { CloseIcon } from '../Icon/CloseIcon/CloseIcon';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
@@ -19,9 +22,6 @@ import { LoginForm } from '../../modules/LoginForm/LoginForm';
 import { IMenuItem, IUserData } from '../types';
 
 import './UserMenuDrawer.scss';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { useAuthContext } from '../../hooks/useAuthContext';
-import { UserContextAction } from '../../context/AuthContext';
 
 export interface IUserMenuDrawer {
   onClose(): void;
@@ -30,7 +30,12 @@ export interface IUserMenuDrawer {
   setModal: ISetModal;
 }
 
-export const UserMenuDrawer = ({ onClose, open, userData, setModal }: IUserMenuDrawer) => {
+export const UserMenuDrawer = ({
+  onClose,
+  open,
+  userData,
+  setModal,
+}: IUserMenuDrawer): JSX.Element => {
   const navigate = useNavigate();
   const { removeItem } = useLocalStorage();
   const { dispatch } = useAuthContext();

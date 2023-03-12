@@ -14,4 +14,7 @@ export default defineConfig({
     open: true,
     port: 3000,
   },
+  define: {
+    'process.env.VITE_API_URL': process.env.VITE_API_URL,
+  },
 });
