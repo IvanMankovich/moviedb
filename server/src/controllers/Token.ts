@@ -1,29 +1,24 @@
 import * as dotenv from 'dotenv';
 import { Request, Response, Router } from 'express';
-import jwt from 'jsonwebtoken';
-import { IUser, User } from '../models/User';
 import { ErrorService } from '../services/ErrorService';
-import { UserDto } from '../services/UserService/UserDto';
+import { tokenService } from '../services/TokenService/TokenService';
 
 dotenv.config();
 const tokenRouter = Router();
 
 tokenRouter.get('', async (req: Request, res: Response) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
+    const { refreshToken } = req.cookies;
     if (!refreshToken) return res.sendStatus(401);
-    const user = await User.findOne({
-      refreshToken: refreshToken,
+    const userData = await tokenService.refreshToken(refreshToken);
+    res.cookie('refreshToken', userData.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
     });
-    const userData = new UserDto(user?.toObject() as IUser);
-    if (!user) return res.sendStatus(403);
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET!, (err: unknown) => {
-      if (err) return res.sendStatus(403);
-      const { _id, userName, email } = user;
-      const accessToken = jwt.sign({ _id, userName, email }, process.env.ACCESS_TOKEN_SECRET!, {
-        expiresIn: '15s',
-      });
-      res.json({ accessToken, userData });
+    return res.json({
+      userData: userData.userData,
+      refreshToken: userData.refreshToken,
+      accessToken: userData.accessToken,
     });
   } catch (error) {
     if (error instanceof ErrorService) {

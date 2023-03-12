@@ -23,7 +23,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
 userRouter.post('/login', async (req: Request, res: Response) => {
   try {
     const { refreshToken, accessToken, userData } = await userService.login({
-      userName: req.body.userName,
+      email: req.body.email?.toLowerCase?.()?.trim?.(),
       password: req.body.password,
     });
     res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {

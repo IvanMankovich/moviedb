@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 
 import { User } from '../../models/User';
@@ -7,10 +6,9 @@ import { IUser } from '../../models/User';
 import { ErrorService } from '../ErrorService';
 import { getGIRegEx } from '../../utils/helpers';
 import { UserDto } from './UserDto';
+import { tokenService } from '../TokenService/TokenService';
 
 dotenv.config();
-
-const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
 class UserService {
   async createUser(userData: IUser) {
@@ -46,25 +44,24 @@ class UserService {
     }
   }
 
-  async login(params: Pick<IUser, 'userName' | 'password'>) {
-    const user = await User.findOne({ userName: params.userName });
+  async login(params: Pick<IUser, 'email' | 'password'>) {
+    const user = await User.findOne({ email: getGIRegEx(params.email) });
     if (user) {
       const match = await bcrypt.compare(params.password, user.password);
       if (!match) {
         throw ErrorService.UnauthorizedError('Wrong credentials', ['Wrong credentials']);
       } else {
         const { _id, userName, email } = user;
-        const accessToken = jwt.sign({ _id, userName, email }, ACCESS_TOKEN_SECRET!, {
-          expiresIn: '15s',
+        const { accessToken, refreshToken } = tokenService.generateTokens({
+          _id: _id.toString(),
+          userName,
+          email,
         });
-        const refreshToken = jwt.sign({ _id, userName, email }, REFRESH_TOKEN_SECRET!, {
-          expiresIn: '1d',
-        });
-        user.refreshToken = refreshToken;
-        const updatedUser = (await user.save()).toObject() as IUser;
-        const userDto = new UserDto(updatedUser);
+
+        await tokenService.saveToken(_id.toString(), refreshToken);
+
         return {
-          userData: userDto,
+          userData: new UserDto(user.toObject()),
           refreshToken,
           accessToken,
         };

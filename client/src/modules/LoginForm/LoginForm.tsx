@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Alert, Button, Checkbox, Form, Input, Typography } from 'antd';
 import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { UserContextAction } from '../../context/AuthContext';
@@ -9,8 +9,8 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { IUserData } from '../../components/types';
 
 export interface ILoginFormData {
-  // email: string;
-  password: string;
+  email: string;
+  // password: string;
   userName: string;
   // remember: boolean;
 }
@@ -23,10 +23,14 @@ export interface ILoginResponse {
 export const LoginForm = (): JSX.Element => {
   const { dispatch } = useAuthContext();
   const { setItem } = useLocalStorage();
+  const [isLogged, setLogged] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [errorMsg, setErrorMsg] = useState<string>('');
 
   const onFinish = async (values: ILoginFormData) => {
+    setLoading(true);
     await axios
-      .post('http://localhost:4000/user/login', {
+      .post(`${import.meta.env.VITE_API_URL}/users/login`, {
         ...values,
       })
       .then(
@@ -35,16 +39,30 @@ export const LoginForm = (): JSX.Element => {
           dispatch({ type: UserContextAction.login, payload: userData });
           setItem('user', JSON.stringify(userData));
           setItem('accessToken', accessToken);
+          setLogged(true);
         },
-        (err) => console.log(err),
-      );
+        (err) => {
+          setErrorMsg(err.response.data.errors);
+        },
+      )
+      .finally(() => setLoading(false));
   };
 
   const onFinishFailed = (errorInfo: ValidateErrorEntity<ILoginFormData>) => {
     console.log('Failed:', errorInfo);
   };
 
-  return (
+  return isLogged ? (
+    <Alert
+      message={'Registered successfully'}
+      description={
+        <>
+          <Typography.Text>Logged in successfully.</Typography.Text>
+        </>
+      }
+      type='success'
+    />
+  ) : (
     <Form
       name='basic'
       labelCol={{ span: 8 }}
@@ -54,18 +72,12 @@ export const LoginForm = (): JSX.Element => {
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete='off'
+      disabled={isLoading}
     >
-      {/* <Form.Item
+      <Form.Item
         label='Email'
         name='email'
         rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
-      >
-        <Input />
-      </Form.Item> */}
-      <Form.Item
-        label='Username'
-        name='userName'
-        rules={[{ required: true, message: 'Please input your username!' }]}
       >
         <Input />
       </Form.Item>
@@ -77,6 +89,10 @@ export const LoginForm = (): JSX.Element => {
       >
         <Input.Password />
       </Form.Item>
+
+      {errorMsg ? (
+        <Alert message={'Authorization error'} description={errorMsg} type='error' />
+      ) : null}
 
       <Form.Item name='remember' valuePropName='checked'>
         <Checkbox>Remember me</Checkbox>

@@ -32,7 +32,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.get('/', (req: Request, res: Response) => {
   res.send('health check');
 });
-app.use('/user', userRouter);
+app.use('/users', userRouter);
 app.use('/movies', movieRouter);
 app.use('/token', tokenRouter);
 

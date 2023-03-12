@@ -33,7 +33,7 @@ export const RegisterPage = (): JSX.Element => {
   const registerUser = async (values: IRegisterUserData): Promise<void> => {
     try {
       setLoading(true);
-      await axios.post('http://localhost:4000/user/signup', { ...values }).then(
+      await axios.post(`${import.meta.env.VITE_API_URL}/users/signup`, { ...values }).then(
         () => {
           setRegistered(true);
           setLoading(false);

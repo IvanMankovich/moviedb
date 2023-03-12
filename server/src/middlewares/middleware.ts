@@ -1,30 +1,31 @@
 import * as dotenv from 'dotenv';
-import jwt from 'jsonwebtoken';
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response, Request } from 'express';
+import { ErrorService } from '../services/ErrorService';
+import { tokenService } from '../services/TokenService/TokenService';
 
 dotenv.config();
 
-const isLoggedIn = async (req: any, res: Response, next: NextFunction) => {
+function checkAuth(req: Request, res: Response, next: NextFunction) {
   try {
-    if (req.headers.authorization) {
-      const token = req.headers.authorization.split(' ')[1];
-      if (token) {
-        const payload = await jwt.verify(token, process.env.SECRET!);
-        if (payload) {
-          req.user = payload;
-          next();
-        } else {
-          res.status(400).json({ error: 'token verification failed' });
-        }
-      } else {
-        res.status(400).json({ error: 'malformed auth header' });
-      }
-    } else {
-      res.status(400).json({ error: 'No authorization header' });
+    const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader) {
+      return next(ErrorService.UnauthorizedError());
     }
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-};
 
-export { isLoggedIn };
+    const accessToken = authorizationHeader.split(' ')[1];
+    if (!accessToken) {
+      return next(ErrorService.UnauthorizedError());
+    }
+
+    const userData = tokenService.validateAccessToken(accessToken);
+    if (!userData) {
+      return next(ErrorService.UnauthorizedError());
+    }
+
+    next();
+  } catch (e) {
+    return next(ErrorService.UnauthorizedError());
+  }
+}
+
+export { checkAuth };
