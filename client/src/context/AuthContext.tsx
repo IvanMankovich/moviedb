@@ -58,6 +58,9 @@ export const AuthContextProvider = ({ children }: IAuthContextProvider) => {
         withCredentials: true,
       });
       const { userData, accessToken } = response.data;
+      const image = new Image();
+      image.src = `data:${userData.userPic.contentType};base64,${userData.userPic.data}`;
+      userData.userPic = image.src;
       dispatch({ type: UserContextAction.login, payload: userData });
       setItem('user', JSON.stringify(userData));
       setItem('accessToken', accessToken);

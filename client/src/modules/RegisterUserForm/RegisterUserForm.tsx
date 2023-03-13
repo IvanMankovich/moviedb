@@ -1,9 +1,13 @@
 import React from 'react';
 import moment from 'moment';
 
+import { PlusOutlined } from '@ant-design/icons';
+import { Upload } from 'antd';
+
 import { Alert, Button, DatePicker, Form, Input, Select, Typography } from 'antd';
 
 import './RegisterUserForm.scss';
+import { UploadChangeParam } from 'antd/es/upload';
 
 export interface IOption {
   label: string;
@@ -34,6 +38,13 @@ export const RegisterUserForm = ({
   isLoading,
   errorMsg,
 }: IRegisterUserForm): JSX.Element => {
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
   const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
@@ -63,6 +74,13 @@ export const RegisterUserForm = ({
       value: i.toString(36) + i,
     });
   }
+
+  const normFile = (e: UploadChangeParam) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.file;
+  };
 
   return (
     <>
@@ -106,6 +124,19 @@ export const RegisterUserForm = ({
             options={options}
           />
         </Form.Item>
+
+        <Form.Item name='userPic' label='Avatar' valuePropName='file' getValueFromEvent={normFile}>
+          <Upload
+            name='logo'
+            listType='picture-circle'
+            beforeUpload={() => false}
+            maxCount={1}
+            multiple={false}
+          >
+            {uploadButton}
+          </Upload>
+        </Form.Item>
+
         <Form.Item name={'dob'} label='DoB' {...config}>
           <DatePicker
             disabledDate={(current) => {
