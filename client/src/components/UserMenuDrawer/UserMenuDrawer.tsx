@@ -1,25 +1,12 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { ReactNode } from 'react';
 
-import { Drawer, Button, Menu as AntdMenu, List, Divider } from 'antd';
-
-import { ISetModal } from '../../store/modalStore';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { useAuthContext } from '../../hooks/useAuthContext';
-import { UserContextAction } from '../../context/AuthContext';
+import { Drawer, Button, List, Divider } from 'antd';
 
 import { CloseIcon } from '../Icon/CloseIcon/CloseIcon';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
-import { LogoutIcon } from '../Icon/LogoutIcon/LogoutIcon';
-import { LoginIcon } from '../Icon/LoginIcon/LoginIcon';
-import { FavoriteIcon } from '../Icon/FavoriteIcon/FavoriteIcon';
-import { KeyIcon } from '../Icon/KeyIcon/KeyIcon';
-import { SettingsIcon } from '../Icon/SettingsIcon/SettingsIcon';
 import { Avatar } from '../Avatar/Avatar';
 
-import { LoginForm } from '../../modules/LoginForm/LoginForm';
-
-import { IMenuItem, IUserData } from '../types';
+import { IUserData } from '../types';
 
 import './UserMenuDrawer.scss';
 
@@ -27,103 +14,15 @@ export interface IUserMenuDrawer {
   onClose(): void;
   open: boolean;
   userData: IUserData | null;
-  setModal: ISetModal;
+  menuItems: ReactNode;
 }
 
 export const UserMenuDrawer = ({
   onClose,
   open,
   userData,
-  setModal,
+  menuItems,
 }: IUserMenuDrawer): JSX.Element => {
-  const navigate = useNavigate();
-  const { removeItem } = useLocalStorage();
-  const { dispatch } = useAuthContext();
-
-  const menuItems: IMenuItem[] = userData
-    ? [
-        {
-          key: 'preferences',
-          label: (
-            <>
-              <div className='menu-item__icon'>
-                <FavoriteIcon />
-              </div>
-              <p className='menu-item__text'>My preferences</p>
-            </>
-          ),
-          onClick: () => {
-            alert('Preferences');
-          },
-        },
-        {
-          key: 'settings',
-          label: (
-            <>
-              <div className='menu-item__icon'>
-                <SettingsIcon />
-              </div>
-              <p className='menu-item__text'>Settings</p>
-            </>
-          ),
-          onClick: () => {
-            alert('Settings');
-          },
-        },
-        {
-          key: 'logout',
-          label: (
-            <>
-              <div className='menu-item__icon'>
-                <LogoutIcon />
-              </div>
-              <p className='menu-item__text'>Logout</p>
-            </>
-          ),
-          onClick: () => {
-            removeItem('user');
-            removeItem('accessToken');
-            dispatch({ type: UserContextAction.logout, payload: null });
-          },
-        },
-      ]
-    : [
-        {
-          key: 'login',
-          label: (
-            <>
-              <div className='menu-item__icon'>
-                <LoginIcon />
-              </div>
-              <p className='menu-item__text'>Login</p>
-            </>
-          ),
-          onClick: () => {
-            setModal({
-              title: 'Login',
-              modalContent: <LoginForm />,
-              onCancel: () => setModal(null),
-              footer: null,
-            });
-          },
-        },
-        {
-          key: 'register',
-          label: (
-            <>
-              <div className='menu-item__icon'>
-                <KeyIcon />
-              </div>
-              <p className='menu-item__text'>Register</p>
-            </>
-          ),
-          onClick: () => {
-            onClose();
-            navigate('register');
-          },
-        },
-      ];
-
   return (
     <Drawer
       className='user-menu-drawer'
@@ -165,13 +64,7 @@ export const UserMenuDrawer = ({
           <Divider />
         </>
       ) : null}
-      <AntdMenu
-        className='user-menu'
-        mode={'vertical'}
-        theme={'light'}
-        items={menuItems}
-        selectable={false}
-      />
+      {menuItems}
     </Drawer>
   );
 };

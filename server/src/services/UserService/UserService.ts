@@ -75,15 +75,9 @@ class UserService {
     if (!refreshToken) {
       throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
     } else {
-      const user = await User.findOne({
-        refreshToken: refreshToken,
-      });
-      if (user) {
-        user.set('refreshToken', null);
-        await user.save();
-      } else {
+      await tokenService.removeToken(refreshToken).catch(() => {
         throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
-      }
+      });
     }
   }
 }
