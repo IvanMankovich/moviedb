@@ -1,4 +1,9 @@
 import * as dotenv from 'dotenv';
+import path from 'path';
+import multer from 'multer';
+import { v4 } from 'uuid';
+import fs from 'fs';
+
 import { Request, Response, Router } from 'express';
 import { userService } from '../services/UserService/UserService';
 import { ErrorService } from '../services/ErrorService';
@@ -7,9 +12,28 @@ import { REFRESH_TOKEN_COOKIE_NAME, REFRESH_TOKEN_MAX_AGE } from '../const';
 dotenv.config();
 const userRouter = Router();
 
-userRouter.post('/signup', async (req: Request, res: Response) => {
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads');
+  },
+  filename: function (req, file, cb) {
+    cb(null, v4() + '-' + Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
+
+userRouter.post('/signup', upload.single('userPic'), async (req: Request, res: Response) => {
   try {
-    const user = await userService.createUser(req.body);
+    const img = req.file?.path ? fs.readFileSync(req.file?.path) : '';
+    const encode_img = img.toString('base64');
+    const final_img = {
+      size: req.file?.size,
+      contentType: req.file?.mimetype,
+      data: Buffer.from(encode_img, 'base64'),
+    };
+
+    const user = await userService.createUser(req.body, final_img);
     res.json(user);
   } catch (error) {
     if (error instanceof ErrorService) {

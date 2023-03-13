@@ -19,6 +19,7 @@ export interface IRegisterUserData {
   password: string;
   favoriteGenres: string[];
   about: string;
+  userPic: File;
   dob?: Date;
 }
 
@@ -31,9 +32,22 @@ export const RegisterPage = (): JSX.Element => {
   const navigate = useNavigate();
 
   const registerUser = async (values: IRegisterUserData): Promise<void> => {
+    const formData = new FormData();
+
+    formData.append('userName', values.userName);
+    formData.append('email', values.email);
+    formData.append('password', values.password);
+    formData.append(
+      'favoriteGenres',
+      values.favoriteGenres?.length?.toString?.() ?? values.favoriteGenres,
+    );
+    formData.append('about', values.about ?? '');
+    formData.append('userPic', values.userPic);
+    formData.append('dob', values.dob?.toISOString?.() ?? '');
+
     try {
       setLoading(true);
-      await axios.post(`${import.meta.env.VITE_API_URL}/users/signup`, { ...values }).then(
+      await axios.post(`${import.meta.env.VITE_API_URL}/users/signup`, formData).then(
         () => {
           setRegistered(true);
           setLoading(false);

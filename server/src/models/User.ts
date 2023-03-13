@@ -7,6 +7,7 @@ export interface IUser {
   userName: string;
   favoriteGenres: Array<string>;
   about: string;
+  userPic: Buffer;
 }
 
 const userSchema = new Schema({
@@ -32,6 +33,11 @@ const userSchema = new Schema({
   },
   about: {
     type: Schema.Types.String,
+  },
+  userPic: {
+    data: Buffer,
+    contentType: String,
+    size: Number,
   },
 });
 

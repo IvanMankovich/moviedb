@@ -11,11 +11,18 @@ import { tokenService } from '../TokenService/TokenService';
 dotenv.config();
 
 class UserService {
-  async createUser(userData: IUser) {
+  async createUser(
+    userData: IUser,
+    file: {
+      contentType?: string;
+      data: Buffer;
+      size?: number;
+    },
+  ) {
     const isUserExists = await this.isUserExists(userData);
     if (!isUserExists) {
       const password = await bcrypt.hash(userData.password, 10);
-      const newUser = new User({ ...userData, password });
+      const newUser = new User({ ...userData, password, userPic: file });
       const result = await newUser.save();
       return result;
     } else {
@@ -59,9 +66,10 @@ class UserService {
         });
 
         await tokenService.saveToken(_id.toString(), refreshToken);
+        const userToObj = user.toObject() as IUser;
 
         return {
-          userData: new UserDto(user.toObject()),
+          userData: { ...new UserDto(userToObj), userPic: userToObj.userPic },
           refreshToken,
           accessToken,
         };
