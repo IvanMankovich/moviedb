@@ -82,16 +82,17 @@ export const mainMenuItems: IMenuItem[] = [
     ),
     path: 'catalogue',
   },
-  {
-    key: 'favorites',
-    label: (
-      <>
-        <div className='menu-item__icon'>
-          <FavoriteIcon />
-        </div>
-        <p className='menu-item__text'>My favorites</p>
-      </>
-    ),
-    path: 'favorites',
-  },
 ];
+
+export const favItemsLink: IMenuItem = {
+  key: 'favorites',
+  label: (
+    <>
+      <div className='menu-item__icon'>
+        <FavoriteIcon />
+      </div>
+      <p className='menu-item__text'>My favorites</p>
+    </>
+  ),
+  path: 'favorites',
+};

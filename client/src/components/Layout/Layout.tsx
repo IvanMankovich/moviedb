@@ -1,5 +1,6 @@
 import React, { useState, ReactNode } from 'react';
 import { To, useNavigate } from 'react-router-dom';
+import { Button, Modal } from 'antd';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useModalStore } from '../../store/modalStore';
@@ -14,10 +15,11 @@ import { MobileMenuDrawer } from '../MobileMenuDrawer/MobileMenuDrawer';
 import { UserMenuDrawer } from '../UserMenuDrawer/UserMenuDrawer';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
 
-import { Button, Modal } from 'antd';
+import { favItemsLink, mainMenuItems } from '../../constants/mainMenuItems';
+import { AuthMenuItems } from '../../modules/MenuItems/AuthMenuItems/AuthMenuItems';
+import { UnauthMenuItems } from '../../modules/MenuItems/UnauthMenuItems/UnauthMenuItems';
 
-import { mainMenuItems } from '../../constants/mainMenuItems';
-import { IMenuItem } from '../types';
+import { IMenuItem, IUserData } from '../types';
 
 import './Layout.scss';
 
@@ -37,23 +39,27 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
   const setModal = useModalStore((state) => state.setModal);
   const { user } = useAuthContext();
 
+  const navigate = useNavigate();
+
   const onClose = () => {
     setOpen(null);
   };
 
-  const navigate = useNavigate();
+  const getMainMenuItems = (user: IUserData | null, mainMenuItems: IMenuItem[]): IMenuItem[] => {
+    return (user ? [...mainMenuItems, favItemsLink] : mainMenuItems).map((item: IMenuItem) =>
+      item.path
+        ? {
+            ...item,
+            onClick: () => {
+              onClose();
+              navigate(item.path as To);
+            },
+          }
+        : item,
+    );
+  };
 
-  const parsedMainMenuItems = mainMenuItems.map((item: IMenuItem) =>
-    item.path
-      ? {
-          ...item,
-          onClick: () => {
-            onClose();
-            navigate(item.path as To);
-          },
-        }
-      : item,
-  );
+  const menuItems = getMainMenuItems(user, mainMenuItems);
 
   return (
     <div className={`theme-${theme}`}>
@@ -61,14 +67,21 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
         <MobileMenuDrawer
           open={open === OpenedDrawer.mobileMainMenu}
           onClose={onClose}
-          menuItems={parsedMainMenuItems}
+          menuItems={menuItems}
         />
         <UserMenuDrawer
           open={open === OpenedDrawer.userMenu}
           onClose={onClose}
-          setModal={setModal}
           userData={user}
+          menuItems={
+            user ? (
+              <AuthMenuItems />
+            ) : (
+              <UnauthMenuItems setModal={setModal} onClose={onClose} navigate={navigate} />
+            )
+          }
         />
+
         <Sidebar menuOpen={false}>
           <>
             <Button
@@ -81,7 +94,7 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
                 onClose();
               }}
             ></Button>
-            <Menu menuItems={parsedMainMenuItems} />
+            <Menu menuItems={menuItems} />
           </>
         </Sidebar>
         <Main>
