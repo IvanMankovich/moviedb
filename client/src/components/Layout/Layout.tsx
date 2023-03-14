@@ -1,8 +1,7 @@
 import React, { useState, ReactNode } from 'react';
-import { To, useNavigate } from 'react-router-dom';
+import { NavigateFunction, To } from 'react-router-dom';
 import { Button, Modal } from 'antd';
 
-import { useAuthContext } from '../../hooks/useAuthContext';
 import { useModalStore } from '../../store/modalStore';
 
 import { Footer } from '../Footer/Footer';
@@ -22,10 +21,13 @@ import { UnauthMenuItems } from '../../modules/MenuItems/UnauthMenuItems/UnauthM
 import { IMenuItem, IUserData } from '../types';
 
 import './Layout.scss';
+import { PageContent } from '../PageContent/PageContent';
 
 export interface ILayout {
   children: ReactNode;
   theme: Theme;
+  user: IUserData | null;
+  navigate: NavigateFunction;
 }
 
 export enum OpenedDrawer {
@@ -33,13 +35,10 @@ export enum OpenedDrawer {
   userMenu = 'userMenu',
 }
 
-export const Layout = ({ children, theme }: ILayout): JSX.Element => {
+export const Layout = ({ children, user, navigate, theme }: ILayout): JSX.Element => {
   const [open, setOpen] = useState<OpenedDrawer | null>(null);
   const modal = useModalStore((state) => state.modal);
   const setModal = useModalStore((state) => state.setModal);
-  const { user } = useAuthContext();
-
-  const navigate = useNavigate();
 
   const onClose = () => {
     setOpen(null);
@@ -99,7 +98,7 @@ export const Layout = ({ children, theme }: ILayout): JSX.Element => {
         </Sidebar>
         <Main>
           <Header setOpen={setOpen} userData={user} />
-          {children}
+          <PageContent>{children}</PageContent>
           <Footer />
         </Main>
         <Modal

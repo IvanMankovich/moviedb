@@ -1,8 +1,10 @@
 import React from 'react';
-import { Outlet, Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useAuthContext } from './hooks/useAuthContext';
 
 import { Layout } from './components/Layout/Layout';
-import { PageContent } from './components/PageContent/PageContent';
+
+import { ProtectedRoute } from './components/ProtectedRoute/ProtectedRoute';
 
 import { HomePage } from './pages/Home/HomePage';
 import { CataloguePage } from './pages/Catalogue/CataloguePage';
@@ -13,38 +15,43 @@ import { RecommendationsPage } from './pages/Recommendations/RecommendationsPage
 import { TopRatedPage } from './pages/TopRated/TopRatedPage';
 import { FavoritesPage } from './pages/Favorites/FavoritesPage';
 import { RegisterPage } from './pages/Register/RegisterPage';
+import { AddProductPage } from './pages/AddProduct/AddProductPage';
+import { ProductPage } from './pages/Product/ProductPage';
+import { AddPersonPage } from './pages/AddPerson/AddPersonPage';
+import { PersonPage } from './pages/Person/PersonPage';
 
 import { Theme } from './types/types';
-
-import { AuthContextProvider } from './context/AuthContext';
 
 import './App.scss';
 
 const App = (): JSX.Element => {
-  return (
-    <AuthContextProvider>
-      <Routes>
-        <Route
-          path='/'
-          element={
-            <Layout theme={Theme.light}>
-              <PageContent>{<Outlet />}</PageContent>
-            </Layout>
-          }
-        >
-          <Route index element={<HomePage />} />
-          <Route path='search' element={<SearchPage />} />
-          <Route path='trending' element={<TrendingPage />} />
-          <Route path='top-rated' element={<TopRatedPage />} />
-          <Route path='recommedations' element={<RecommendationsPage />} />
-          <Route path='catalogue' element={<CataloguePage />} />
-          <Route path='favorites' element={<FavoritesPage />} />
-          <Route path='register' element={<RegisterPage />} />
+  const { user } = useAuthContext();
+  const navigate = useNavigate();
 
-          <Route path='*' element={<NotFoundPage />} />
+  return (
+    <Layout user={user} navigate={navigate} theme={Theme.light}>
+      <Routes>
+        <Route index element={<HomePage />} />
+        <Route path='/' element={<HomePage />} />
+        <Route element={<ProtectedRoute isAllowed={!!user} />}>
+          <Route path='favorites' element={<FavoritesPage />} />
         </Route>
+        <Route path='search' element={<SearchPage />} />
+        <Route path='trending' element={<TrendingPage />} />
+        <Route path='top-rated' element={<TopRatedPage />} />
+        <Route path='recommedations' element={<RecommendationsPage />} />
+        <Route path='catalogue' element={<CataloguePage />} />
+        <Route element={<ProtectedRoute isAllowed={!user} />}>
+          <Route path='register' element={<RegisterPage />} />
+        </Route>
+        <Route path='add-product' element={<AddProductPage />} />
+        <Route path='product/:id' element={<ProductPage />} />
+        <Route path='add-person' element={<AddPersonPage />} />
+        <Route path='person/:id' element={<PersonPage />} />
+
+        <Route path='*' element={<NotFoundPage />} />
       </Routes>
-    </AuthContextProvider>
+    </Layout>
   );
 };
 

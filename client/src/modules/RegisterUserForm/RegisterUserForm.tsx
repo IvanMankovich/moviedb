@@ -2,12 +2,10 @@ import React from 'react';
 import moment from 'moment';
 
 import { PlusOutlined } from '@ant-design/icons';
-import { Upload } from 'antd';
-
-import { Alert, Button, DatePicker, Form, Input, Select, Typography } from 'antd';
+import { Alert, Button, DatePicker, Form, Input, Select, Typography, Upload } from 'antd';
+import { UploadChangeParam } from 'antd/es/upload';
 
 import './RegisterUserForm.scss';
-import { UploadChangeParam } from 'antd/es/upload';
 
 export interface IOption {
   label: string;
@@ -91,7 +89,6 @@ export const RegisterUserForm = ({
       ) : null}
       <Form
         {...layout}
-        name='nest-messages'
         onFinish={registerUser}
         validateMessages={validateMessages}
         className='register-user-form'
