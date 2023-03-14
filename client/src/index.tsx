@@ -5,6 +5,7 @@ import axios from 'axios';
 import reportWebVitals from './reportWebVitals';
 
 import App from './App';
+import { AuthContextProvider } from './context/AuthContext';
 
 import './index.scss';
 
@@ -14,7 +15,9 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <AuthContextProvider>
+        <App />
+      </AuthContextProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );
