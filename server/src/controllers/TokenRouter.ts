@@ -1,11 +1,10 @@
-import * as dotenv from 'dotenv';
 import { Request, Response, Router } from 'express';
+import { REFRESH_TOKEN_COOKIE_NAME, REFRESH_TOKEN_MAX_AGE } from '../const';
 import { IUser, User } from '../models/User';
 import { ErrorService } from '../services/ErrorService';
 import { tokenService } from '../services/TokenService/TokenService';
 import { UserDto } from '../services/UserService/UserDto';
 
-dotenv.config();
 const tokenRouter = Router();
 
 tokenRouter.get('', async (req: Request, res: Response) => {
@@ -15,8 +14,9 @@ tokenRouter.get('', async (req: Request, res: Response) => {
     const userData = await tokenService.refreshToken(refreshToken);
     const currUser = await User.findById(userData.userData._id);
     const currUserToObj = currUser?.toObject() as IUser;
-    res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+    res.cookie(REFRESH_TOKEN_COOKIE_NAME, userData.refreshToken, {
+      // maxAge: 30 * 24 * 60 * 60 * 1000,
+      maxAge: REFRESH_TOKEN_MAX_AGE,
       httpOnly: true,
     });
     return res.json({

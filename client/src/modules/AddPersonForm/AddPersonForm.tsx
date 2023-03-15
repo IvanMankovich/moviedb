@@ -3,6 +3,8 @@ import { AutoComplete, Button, Form, Input, Select, DatePicker, Upload } from 'a
 import moment from 'moment';
 import { UploadChangeParam } from 'antd/es/upload';
 import { PlusOutlined } from '@ant-design/icons';
+import { AutocompleteCustom } from '../../components/Select/Select';
+// import axios from 'axios';
 
 const { Option } = Select;
 
@@ -12,6 +14,7 @@ export interface IOption {
 }
 
 export const AddPersonForm = () => {
+  // const [posOpts, setPosOpts] = useState<IOption[]>([]);
   const [form] = Form.useForm();
 
   const formItemLayout = {
@@ -48,18 +51,9 @@ export const AddPersonForm = () => {
     rules: [{ type: 'object' as const }],
   };
 
-  const handleChange = (value: string[]) => {
-    console.log(`selected ${value}`);
-  };
-
-  const options: IOption[] = [];
-
-  for (let i = 10; i < 36; i++) {
-    options.push({
-      label: i.toString(36) + i,
-      value: i.toString(36) + i,
-    });
-  }
+  // const handleChange = (value: string[]) => {
+  //   console.log(`selected ${value}`);
+  // };
 
   const normFile = (e: UploadChangeParam) => {
     if (Array.isArray(e)) {
@@ -90,6 +84,41 @@ export const AddPersonForm = () => {
     console.log('search:', value);
   };
 
+  // let timeout: ReturnType<typeof setTimeout> | null;
+  // let currentValue: string;
+
+  // const fetch = (value: string, callback: (...args: any[]) => void) => {
+  //   if (timeout) {
+  //     clearTimeout(timeout);
+  //     timeout = null;
+  //   }
+  //   currentValue = value;
+
+  //   const fake = async () => {
+  //     const response = await axios.get(
+  //       `http://localhost:4000/positions?qStr=${value}&qFields=personPosition&pg=1&sortField=personPosition&sortDir=1`,
+  //     );
+  //     const data = response.data.data.map((i: { _id: string; personPosition: string }) => ({
+  //       value: i._id,
+  //       label: i.personPosition,
+  //     }));
+  //     console.log(data);
+  //     callback(data);
+  //     //   }
+  //     // });
+  //   };
+
+  //   timeout = setTimeout(fake, 300);
+  // };
+
+  // const handleSearch = async (newValue: string) => {
+  //   if (newValue) {
+  //     fetch(newValue, setPosOpts);
+  //   } else {
+  //     setPosOpts([]);
+  //   }
+  // };
+
   return (
     <Form
       {...formItemLayout}
@@ -111,14 +140,18 @@ export const AddPersonForm = () => {
       </Form.Item>
 
       <Form.Item name={'personPositions'} label='Position:'>
-        <Select
+        <AutocompleteCustom />
+        {/* <Select
           mode='multiple'
           allowClear
           style={{ width: '100%' }}
           placeholder={`Select person's position`}
-          onChange={handleChange}
-          options={options}
-        />
+          onSearch={handleSearch}
+          options={posOpts}
+          showArrow={false}
+          filterOption={false}
+          showSearch
+        /> */}
       </Form.Item>
 
       <Form.Item

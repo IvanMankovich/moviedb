@@ -3,14 +3,14 @@ import path from 'path';
 import multer from 'multer';
 import { v4 } from 'uuid';
 import fs from 'fs';
-
 import { Request, Response, Router } from 'express';
+
 import { userService } from '../services/UserService/UserService';
 import { ErrorService } from '../services/ErrorService';
 import { REFRESH_TOKEN_COOKIE_NAME, REFRESH_TOKEN_MAX_AGE } from '../const';
 
 dotenv.config();
-const userRouter = Router();
+const usersRouter = Router();
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-userRouter.post('/signup', upload.single('userPic'), async (req: Request, res: Response) => {
+usersRouter.post('/signup', upload.single('userPic'), async (req: Request, res: Response) => {
   try {
     const img = req.file?.path ? fs.readFileSync(req.file?.path) : '';
     const encode_img = img.toString('base64');
@@ -44,7 +44,7 @@ userRouter.post('/signup', upload.single('userPic'), async (req: Request, res: R
   }
 });
 
-userRouter.post('/login', async (req: Request, res: Response) => {
+usersRouter.post('/login', async (req: Request, res: Response) => {
   try {
     const { refreshToken, accessToken, userData } = await userService.login({
       email: req.body.email?.toLowerCase?.()?.trim?.(),
@@ -64,7 +64,7 @@ userRouter.post('/login', async (req: Request, res: Response) => {
   }
 });
 
-userRouter.delete('/logout', async (req: Request, res: Response) => {
+usersRouter.delete('/logout', async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.cookies;
     await userService.logout(refreshToken);
@@ -79,4 +79,4 @@ userRouter.delete('/logout', async (req: Request, res: Response) => {
   }
 });
 
-export { userRouter };
+export { usersRouter };
