@@ -3,18 +3,13 @@ import { AutoComplete, Button, Form, Input, Select, DatePicker, Upload } from 'a
 import moment from 'moment';
 import { UploadChangeParam } from 'antd/es/upload';
 import { PlusOutlined } from '@ant-design/icons';
-import { AutocompleteCustom } from '../../components/Select/Select';
-// import axios from 'axios';
+import axios from 'axios';
+
+import { AutocompleteCustom } from '../../components/AutocompleteCustom/AutocompleteCustom';
 
 const { Option } = Select;
 
-export interface IOption {
-  label: string;
-  value: string;
-}
-
 export const AddPersonForm = () => {
-  // const [posOpts, setPosOpts] = useState<IOption[]>([]);
   const [form] = Form.useForm();
 
   const formItemLayout = {
@@ -28,6 +23,7 @@ export const AddPersonForm = () => {
     },
   };
 
+  // TODO: add values description
   const onFinish = (values: any) => {
     console.log('Received values of form: ', values);
   };
@@ -51,10 +47,6 @@ export const AddPersonForm = () => {
     rules: [{ type: 'object' as const }],
   };
 
-  // const handleChange = (value: string[]) => {
-  //   console.log(`selected ${value}`);
-  // };
-
   const normFile = (e: UploadChangeParam) => {
     if (Array.isArray(e)) {
       return e;
@@ -76,48 +68,29 @@ export const AddPersonForm = () => {
     </div>
   );
 
-  const onChange = (value: string) => {
-    console.log(`selected ${value}`);
+  const positionsRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/positions?qStr=${value}&qFields=personPosition&pg=1&sortField=personPosition&sortDir=1`,
+    );
+    return response.data.data.map((i: { _id: string; personPosition: string }) => ({
+      value: i._id,
+      label: i.personPosition,
+    }));
   };
 
-  const onSearch = (value: string) => {
-    console.log('search:', value);
+  const countriesRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/countries?qStr=${value}&qFields=countryName&pg=1&sortField=countryName&sortDir=1`,
+    );
+    return response.data.data.map((i: { _id: string; countryName: string }) => ({
+      value: i._id,
+      label: i.countryName,
+    }));
   };
-
-  // let timeout: ReturnType<typeof setTimeout> | null;
-  // let currentValue: string;
-
-  // const fetch = (value: string, callback: (...args: any[]) => void) => {
-  //   if (timeout) {
-  //     clearTimeout(timeout);
-  //     timeout = null;
-  //   }
-  //   currentValue = value;
-
-  //   const fake = async () => {
-  //     const response = await axios.get(
-  //       `http://localhost:4000/positions?qStr=${value}&qFields=personPosition&pg=1&sortField=personPosition&sortDir=1`,
-  //     );
-  //     const data = response.data.data.map((i: { _id: string; personPosition: string }) => ({
-  //       value: i._id,
-  //       label: i.personPosition,
-  //     }));
-  //     console.log(data);
-  //     callback(data);
-  //     //   }
-  //     // });
-  //   };
-
-  //   timeout = setTimeout(fake, 300);
-  // };
-
-  // const handleSearch = async (newValue: string) => {
-  //   if (newValue) {
-  //     fetch(newValue, setPosOpts);
-  //   } else {
-  //     setPosOpts([]);
-  //   }
-  // };
 
   return (
     <Form
@@ -139,19 +112,21 @@ export const AddPersonForm = () => {
         <Input />
       </Form.Item>
 
-      <Form.Item name={'personPositions'} label='Position:'>
-        <AutocompleteCustom />
-        {/* <Select
+      <Form.Item
+        name={'personPositions'}
+        label='Position:'
+        rules={[{ required: true, message: `Please input person's position!`, type: 'array' }]}
+      >
+        <AutocompleteCustom
+          searchCallback={positionsRequest}
           mode='multiple'
           allowClear
           style={{ width: '100%' }}
           placeholder={`Select person's position`}
-          onSearch={handleSearch}
-          options={posOpts}
           showArrow={false}
           filterOption={false}
           showSearch
-        /> */}
+        />
       </Form.Item>
 
       <Form.Item
@@ -193,29 +168,15 @@ export const AddPersonForm = () => {
       </Form.Item>
 
       <Form.Item name='personPlaceOfBirth' label='Place of birth'>
-        <Select
+        <AutocompleteCustom
+          searchCallback={countriesRequest}
+          mode='multiple'
+          allowClear
+          style={{ width: '100%' }}
+          placeholder={`Select person's place of birth`}
+          showArrow={false}
+          filterOption={false}
           showSearch
-          placeholder='Select a person'
-          optionFilterProp='children'
-          onChange={onChange}
-          onSearch={onSearch}
-          filterOption={(input, option) =>
-            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-          }
-          options={[
-            {
-              value: 'jack',
-              label: 'Jack',
-            },
-            {
-              value: 'lucy',
-              label: 'Lucy',
-            },
-            {
-              value: 'tom',
-              label: 'Tom',
-            },
-          ]}
         />
       </Form.Item>
 

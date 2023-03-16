@@ -10,6 +10,7 @@ import { movieRouter } from './controllers/Movie';
 
 import { connectDB } from './db/dbConnect';
 import { UserContext } from './utils/UserContext';
+import { countriesRouter } from './controllers/CountriesRouter';
 
 dotenv.config();
 const { PORT } = process.env;
@@ -38,6 +39,7 @@ app.use('/users', usersRouter);
 app.use('/movies', movieRouter);
 app.use('/token', tokenRouter);
 app.use('/positions', positionsRouter);
+app.use('/countries', countriesRouter);
 
 const listetingServer = app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 

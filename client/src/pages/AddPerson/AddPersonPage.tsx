@@ -1,17 +1,15 @@
 import React from 'react';
+import { Typography } from 'antd';
+import Title from 'antd/es/typography/Title';
 import { AddPersonForm } from '../../modules/AddPersonForm/AddPersonForm';
 
 export const AddPersonPage = (): JSX.Element => {
-  // TODO: add autocomplete/select with debouncer
-  // TODO: add positions query to client
-
-  // TODO: add countries query to backend
-  // TODO: add countries query to client
-
   // TODO: fix page style
 
   return (
     <>
+      <Title>Add person</Title>
+      <Typography.Text>Add new person data to our database to use it later</Typography.Text>
       <AddPersonForm />
     </>
   );
