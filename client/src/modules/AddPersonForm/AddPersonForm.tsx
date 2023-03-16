@@ -1,15 +1,32 @@
 import React, { useState } from 'react';
-import { AutoComplete, Button, Form, Input, Select, DatePicker, Upload } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Upload,
+  Alert,
+  Typography,
+} from 'antd';
 import moment from 'moment';
 import { UploadChangeParam } from 'antd/es/upload';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { IAddPersonData } from '../../pages/AddPerson/AddPersonPage';
 
 import { AutocompleteCustom } from '../../components/AutocompleteCustom/AutocompleteCustom';
 
 const { Option } = Select;
 
-export const AddPersonForm = () => {
+export interface IRegisterUserForm {
+  addPerson(values: IAddPersonData): Promise<void>;
+  isLoading: boolean;
+  errorMsg: string;
+}
+
+export const AddPersonForm = ({ addPerson, isLoading, errorMsg }: IRegisterUserForm) => {
   const [form] = Form.useForm();
 
   const formItemLayout = {
@@ -21,11 +38,6 @@ export const AddPersonForm = () => {
       xs: { span: 24 },
       sm: { span: 16 },
     },
-  };
-
-  // TODO: add values description
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
   };
 
   const [autoCompleteResult, setAutoCompleteResult] = useState<string[]>([]);
@@ -93,147 +105,154 @@ export const AddPersonForm = () => {
   };
 
   return (
-    <Form
-      {...formItemLayout}
-      form={form}
-      onFinish={onFinish}
-      style={{ minWidth: '100%', width: '100%' }}
-      scrollToFirstError
-    >
-      <Form.Item
-        name='personName'
-        label='Person name'
-        rules={[{ required: true, message: 'Please input person name!', whitespace: true }]}
-      >
-        <Input />
-      </Form.Item>
+    <>
+      <Typography.Title level={3}>Add person form</Typography.Title>
 
-      <Form.Item name='personFullName' label='Person full name'>
-        <Input />
-      </Form.Item>
-
-      <Form.Item
-        name={'personPositions'}
-        label='Position:'
-        rules={[{ required: true, message: `Please input person's position!`, type: 'array' }]}
+      {errorMsg ? (
+        <Alert message={'Create person error'} description={errorMsg} type='error' />
+      ) : null}
+      <Form
+        {...formItemLayout}
+        form={form}
+        onFinish={addPerson}
+        style={{ minWidth: '100%', width: '100%' }}
+        scrollToFirstError
+        disabled={isLoading}
       >
-        <AutocompleteCustom
-          searchCallback={positionsRequest}
-          mode='multiple'
-          allowClear
-          style={{ width: '100%' }}
-          placeholder={`Select person's position`}
-          showArrow={false}
-          filterOption={false}
-          showSearch
-        />
-      </Form.Item>
-
-      <Form.Item
-        name='personPic'
-        label='Person title photo'
-        valuePropName='file'
-        getValueFromEvent={normFile}
-      >
-        <Upload
-          name='logo'
-          listType='picture-card'
-          beforeUpload={() => false}
-          maxCount={1}
-          multiple={false}
+        <Form.Item
+          name='personName'
+          label='Person name'
+          rules={[{ required: true, message: 'Please input person name!', whitespace: true }]}
         >
-          {uploadButton}
-        </Upload>
-      </Form.Item>
-
-      <Form.Item
-        name='personGender'
-        label='Gender'
-        rules={[{ required: true, message: 'Please select gender!' }]}
-      >
-        <Select placeholder='select your gender'>
-          <Option value='male'>Male</Option>
-          <Option value='female'>Female</Option>
-          <Option value='other'>Other</Option>
-        </Select>
-      </Form.Item>
-
-      <Form.Item name='personDoB' label='Date of birth' {...dobConfig}>
-        <DatePicker
-          disabledDate={(current) => {
-            const customDate = moment().format('YYYY-MM-DD');
-            return current && current > moment(customDate, 'YYYY-MM-DD');
-          }}
-        />
-      </Form.Item>
-
-      <Form.Item name='personPlaceOfBirth' label='Place of birth'>
-        <AutocompleteCustom
-          searchCallback={countriesRequest}
-          mode='multiple'
-          allowClear
-          style={{ width: '100%' }}
-          placeholder={`Select person's place of birth`}
-          showArrow={false}
-          filterOption={false}
-          showSearch
-        />
-      </Form.Item>
-
-      <Form.Item
-        name='personWebsite'
-        label='Website'
-        rules={[{ required: true, message: 'Please input website!' }]}
-      >
-        <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='website'>
           <Input />
-        </AutoComplete>
-      </Form.Item>
+        </Form.Item>
 
-      <Form.Item name={['personSocials', 'facebook']} label='Facebook page'>
-        <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='Facebook'>
+        <Form.Item name='personFullName' label='Person full name'>
           <Input />
-        </AutoComplete>
-      </Form.Item>
+        </Form.Item>
 
-      <Form.Item name={['personSocials', 'twitter']} label='Twitter page'>
-        <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='Twitter'>
-          <Input />
-        </AutoComplete>
-      </Form.Item>
-
-      <Form.Item name={['personSocials', 'instagram']} label='Instagram page'>
-        <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='Instagram'>
-          <Input />
-        </AutoComplete>
-      </Form.Item>
-
-      <Form.Item name='personDescription' label='About'>
-        <Input.TextArea showCount maxLength={2000} />
-      </Form.Item>
-
-      <Form.Item
-        name='personGalleryPhotos'
-        label='Person gallery photos'
-        valuePropName='fileList'
-        getValueFromEvent={normFilee}
-      >
-        <Upload
-          name='logo'
-          listType='picture-card'
-          beforeUpload={() => false}
-          maxCount={10}
-          multiple={true}
+        <Form.Item
+          name={'personPositions'}
+          label='Position:'
+          rules={[{ required: true, message: `Please input person's position!`, type: 'array' }]}
         >
-          {uploadButton}
-        </Upload>
-      </Form.Item>
+          <AutocompleteCustom
+            searchCallback={positionsRequest}
+            mode='multiple'
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={`Select person's position`}
+            showArrow={false}
+            filterOption={false}
+            showSearch
+          />
+        </Form.Item>
 
-      <Form.Item>
-        <Button type='primary' htmlType='submit'>
-          Register
-        </Button>
-      </Form.Item>
-    </Form>
+        <Form.Item
+          name='personPic'
+          label='Person title photo'
+          valuePropName='file'
+          getValueFromEvent={normFile}
+        >
+          <Upload
+            name='logo'
+            listType='picture-card'
+            beforeUpload={() => false}
+            maxCount={1}
+            multiple={false}
+          >
+            {uploadButton}
+          </Upload>
+        </Form.Item>
+
+        <Form.Item
+          name='personGender'
+          label='Gender'
+          rules={[{ required: true, message: 'Please select gender!' }]}
+        >
+          <Select placeholder='select gender'>
+            <Option value='male'>Male</Option>
+            <Option value='female'>Female</Option>
+            <Option value='other'>Other</Option>
+          </Select>
+        </Form.Item>
+
+        <Form.Item name='personDoB' label='Date of birth' {...dobConfig}>
+          <DatePicker
+            disabledDate={(current) => {
+              const customDate = moment().format('YYYY-MM-DD');
+              return current && current > moment(customDate, 'YYYY-MM-DD');
+            }}
+          />
+        </Form.Item>
+
+        <Form.Item name='personPlaceOfBirth' label='Place of birth'>
+          <AutocompleteCustom
+            searchCallback={countriesRequest}
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={`Select person's place of birth`}
+            showArrow={false}
+            filterOption={false}
+            showSearch
+          />
+        </Form.Item>
+
+        <Form.Item
+          name='personWebsite'
+          label='Website'
+          rules={[{ required: true, message: 'Please input website!' }]}
+        >
+          <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='website'>
+            <Input />
+          </AutoComplete>
+        </Form.Item>
+
+        <Form.Item name={['personSocials', 'facebook']} label='Facebook page'>
+          <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='Facebook'>
+            <Input />
+          </AutoComplete>
+        </Form.Item>
+
+        <Form.Item name={['personSocials', 'twitter']} label='Twitter page'>
+          <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='Twitter'>
+            <Input />
+          </AutoComplete>
+        </Form.Item>
+
+        <Form.Item name={['personSocials', 'instagram']} label='Instagram page'>
+          <AutoComplete options={websiteOptions} onChange={onWebsiteChange} placeholder='Instagram'>
+            <Input />
+          </AutoComplete>
+        </Form.Item>
+
+        <Form.Item name='personDescription' label='About'>
+          <Input.TextArea showCount maxLength={2000} />
+        </Form.Item>
+
+        <Form.Item
+          name='personGalleryPhotos'
+          label='Person gallery photos'
+          valuePropName='fileList'
+          getValueFromEvent={normFilee}
+        >
+          <Upload
+            name='logo'
+            listType='picture-card'
+            beforeUpload={() => false}
+            maxCount={10}
+            multiple={true}
+          >
+            {uploadButton}
+          </Upload>
+        </Form.Item>
+
+        <Form.Item>
+          <Button type='primary' htmlType='submit'>
+            Register
+          </Button>
+        </Form.Item>
+      </Form>
+    </>
   );
 };

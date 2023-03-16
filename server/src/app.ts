@@ -3,14 +3,17 @@ import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+
+import { connectDB } from './db/dbConnect';
+
 import { usersRouter } from './controllers/UsersRouter';
 import { tokenRouter } from './controllers/TokenRouter';
 import { positionsRouter } from './controllers/PositionsRouter';
 import { movieRouter } from './controllers/Movie';
-
-import { connectDB } from './db/dbConnect';
-import { UserContext } from './utils/UserContext';
 import { countriesRouter } from './controllers/CountriesRouter';
+import { peopleRouter } from './controllers/PeopleRouter';
+
+import { UserContext } from './utils/UserContext';
 
 dotenv.config();
 const { PORT } = process.env;
@@ -40,6 +43,7 @@ app.use('/movies', movieRouter);
 app.use('/token', tokenRouter);
 app.use('/positions', positionsRouter);
 app.use('/countries', countriesRouter);
+app.use('/people', peopleRouter);
 
 const listetingServer = app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
