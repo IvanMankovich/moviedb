@@ -1,11 +1,11 @@
 import * as dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
-import { IUser, User } from '../../models/User';
+import { IUser } from '../../models/User';
 import { Token } from '../../models/Token';
 import { ACCESS_TOKEN_MAX_AGE, REFRESH_TOKEN_MAX_AGE } from '../../const';
 import { ErrorService } from '../ErrorService';
-import { UserDto } from '../UserService/UserDto';
+import { userService } from '../UserService/UserService';
 
 dotenv.config();
 
@@ -28,7 +28,7 @@ class TokensService {
   validateAccessToken(token: string) {
     try {
       const userData = jwt.verify(token, ACCESS_TOKEN_SECRET!);
-      return userData;
+      return userData as IUser | null;
     } catch (e) {
       return null;
     }
@@ -37,7 +37,7 @@ class TokensService {
   validateRefreshToken(token: string) {
     try {
       const userData = jwt.verify(token, REFRESH_TOKEN_SECRET!);
-      return userData;
+      return userData as IUser | null;
     } catch (e) {
       return null;
     }
@@ -65,21 +65,25 @@ class TokensService {
     return tokenData;
   }
 
-  async refreshToken(refreshToken?: string) {
+  async refreshToken(refreshToken: string) {
     if (!refreshToken) {
       throw ErrorService.UnauthorizedError();
     }
-    const userData = this.validateRefreshToken(refreshToken) as IUser;
+    const userData = this.validateRefreshToken(refreshToken);
     const tokenFromDb = await this.findToken(refreshToken);
     if (!userData || !tokenFromDb) {
       throw ErrorService.UnauthorizedError();
     } else {
-      const user = await User.findById(userData._id.toString());
+      const user = await userService.getUserById(userData._id);
+
       if (user) {
-        const userDto = new UserDto(user?.toObject());
-        const tokens = this.generateTokens({ ...userDto });
-        await this.saveToken(userDto._id, tokens.refreshToken);
-        return { ...tokens, userData: userDto };
+        const tokens = this.generateTokens({
+          _id: user._id,
+          userName: user.userName,
+          userEmail: user.userEmail,
+        });
+        await this.saveToken(user._id, tokens.refreshToken);
+        return { ...tokens, userData: user };
       } else {
         throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
       }

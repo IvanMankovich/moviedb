@@ -34,9 +34,11 @@ export const LoginForm = (): JSX.Element => {
       .then(
         (res) => {
           const { userData, accessToken } = res.data;
-          const image = new Image();
-          image.src = `data:${userData.userPic.contentType};base64,${userData.userPic.data}`;
-          userData.userPic = image.src;
+          if (userData.userPic) {
+            const image = new Image();
+            image.src = `data:${userData.userPic[0].contentType};base64,${userData.userPic[0].data}`;
+            userData.userPic = image.src;
+          }
           dispatch({ type: UserContextAction.login, payload: userData });
           setItem('user', JSON.stringify(userData));
           setItem('accessToken', accessToken);

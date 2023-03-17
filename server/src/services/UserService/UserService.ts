@@ -9,6 +9,7 @@ import { UserDto } from './UserDto';
 import { tokensService } from '../TokensService/TokensService';
 import { CreateUser } from './helpers';
 import { assetsService } from '../AssetsService/AssetsService';
+import { Types } from 'mongoose';
 
 dotenv.config();
 
@@ -60,7 +61,18 @@ class UserService {
   }
 
   async login(params: Pick<IUser, 'userEmail' | 'userPassword'>) {
-    const user = await User.findOne({ userEmail: getGIRegEx(params.userEmail) });
+    const users = await User.aggregate([
+      { $match: { userEmail: getGIRegEx(params.userEmail) } },
+      {
+        $lookup: {
+          from: 'assets',
+          localField: 'userPic',
+          foreignField: '_id',
+          as: 'userPic',
+        },
+      },
+    ]);
+    const user = users?.[0];
     if (user) {
       const match = await bcrypt.compare(params.userPassword, user.userPassword);
       if (!match) {
@@ -68,16 +80,15 @@ class UserService {
       } else {
         const { _id, userName, userEmail } = user;
         const { accessToken, refreshToken } = tokensService.generateTokens({
-          _id: _id.toString(),
+          _id,
           userName,
           userEmail,
         });
 
-        await tokensService.saveToken(_id.toString(), refreshToken);
-        const userToObj = user.toObject() as IUser;
+        await tokensService.saveToken(_id, refreshToken);
 
         return {
-          userData: { ...new UserDto(userToObj), userPic: userToObj.userPic },
+          userData: new UserDto(user),
           refreshToken,
           accessToken,
         };
@@ -94,6 +105,30 @@ class UserService {
       await tokensService.removeToken(refreshToken).catch(() => {
         throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
       });
+    }
+  }
+
+  async getUserById(id?: string) {
+    if (id) {
+      const users = await User.aggregate([
+        { $match: { _id: new Types.ObjectId(id) } },
+        {
+          $lookup: {
+            from: 'assets',
+            localField: 'userPic',
+            foreignField: '_id',
+            as: 'userPic',
+          },
+        },
+      ]);
+      const user = users?.[0];
+      if (user) {
+        return new UserDto(user);
+      } else {
+        throw ErrorService.UnauthorizedError(`User doesn't exist`);
+      }
+    } else {
+      throw ErrorService.UnauthorizedError(`UserId not provided`);
     }
   }
 }
