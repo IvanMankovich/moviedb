@@ -33,14 +33,12 @@ const personSchema = new Schema({
     index: 1,
   },
   personPositions: {
-    type: [Schema.Types.String],
+    type: [Schema.Types.ObjectId],
     required: true,
     index: 1,
   },
   personPic: {
-    data: Buffer,
-    contentType: String,
-    size: Number,
+    type: Schema.Types.ObjectId,
   },
   personGender: {
     type: Schema.Types.String,
@@ -51,7 +49,7 @@ const personSchema = new Schema({
     index: 1,
   },
   personPlaceOfBirth: {
-    type: Schema.Types.String,
+    type: Schema.Types.ObjectId,
     index: 1,
   },
   personWebsite: {
@@ -70,6 +68,9 @@ const personSchema = new Schema({
   },
   personDescription: {
     type: Schema.Types.String,
+  },
+  personGalleryPhotos: {
+    type: [Schema.Types.ObjectId],
   },
 });
 

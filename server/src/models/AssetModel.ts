@@ -2,14 +2,20 @@ import { model, Schema } from 'mongoose';
 
 export interface IAsset {
   _id: string;
-  assetData: Buffer;
+  data: Buffer;
+  contentType: string;
+  size: number;
 }
 
 const assetSchema = new Schema({
-  assetData: {
-    data: Buffer,
-    contentType: String,
-    size: Number,
+  data: {
+    type: Schema.Types.Buffer,
+  },
+  contentType: {
+    type: Schema.Types.String,
+  },
+  size: {
+    type: Schema.Types.Number,
   },
 });
 

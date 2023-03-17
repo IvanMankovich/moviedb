@@ -10,7 +10,7 @@ export interface IFile {
 class AssetsService {
   async addAssets(assetData: IFile[]) {
     if (assetData.length) {
-      const files = await Asset.insertMany(assetData).catch((e) => console.log(e));
+      const files = await Asset.insertMany(assetData);
       return files;
     } else {
       throw ErrorService.BadRequest('Files are not provided');
