@@ -40,8 +40,9 @@ export interface IAuthContextProvider {
 }
 
 export const AuthContextProvider = ({ children }: IAuthContextProvider) => {
+  // TODO: fix init state for logged user
   const [state, dispatch] = useReducer(authReducer, { user: null });
-  const { setItem } = useLocalStorage();
+  const { setItem, removeItem } = useLocalStorage();
 
   useEffect(() => {
     const rawUserData = localStorage.getItem('user');
@@ -58,13 +59,17 @@ export const AuthContextProvider = ({ children }: IAuthContextProvider) => {
         withCredentials: true,
       });
       const { userData, accessToken } = response.data;
-      const image = new Image();
-      image.src = `data:${userData.userPic.contentType};base64,${userData.userPic.data}`;
-      userData.userPic = image.src;
+      if (userData.userPic) {
+        const image = new Image();
+        image.src = `data:${userData.userPic[0].contentType};base64,${userData.userPic[0].data}`;
+        userData.userPic = image.src;
+      }
       dispatch({ type: UserContextAction.login, payload: userData });
       setItem('user', JSON.stringify(userData));
       setItem('accessToken', accessToken);
     } catch (err) {
+      removeItem('user');
+      removeItem('accessToken');
       console.log(err);
     }
   };
