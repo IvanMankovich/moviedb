@@ -32,9 +32,14 @@ peopleRouter.post(
       if (!req.body.personData) {
         throw ErrorService.BadRequest('Person data not provided');
       }
-      const aaa = JSON.parse(req.body.personData) as IPerson;
-      const personData = await peopleService.createPerson(aaa);
-      res.json({ personData });
+      const personData = JSON.parse(req.body.personData) as IPerson;
+      const createdPerson = await peopleService.createPerson(
+        personData,
+        req.files as {
+          [fieldname: string]: Express.Multer.File[];
+        },
+      );
+      res.json({ createdPerson });
     } catch (error) {
       if (error instanceof ErrorService) {
         res.status(error.status).json(error);

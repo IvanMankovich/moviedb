@@ -1,12 +1,25 @@
+import fs from 'fs';
+
 export const getGIRegEx = (str: string) => {
-  return new RegExp(str, 'gi');
+  return { $regex: str, $options: 'i' };
 };
 
 export const getSearchStr = (qFields: string | string[], qStr: string) => {
-  const reObj = { $regex: qStr, $options: 'i' };
+  const reObj = getGIRegEx(qStr);
   if (Array.isArray(qFields)) {
     return qFields.reduce((obj, item) => Object.assign(obj, { [item]: reObj }), {});
   } else {
     return { [qFields]: reObj };
   }
+};
+
+export const parseFiles = (files: Express.Multer.File[]) => {
+  return files.map((file) => {
+    const encode_img = fs.readFileSync(file?.path).toString('base64');
+    return {
+      size: file?.size,
+      contentType: file?.mimetype,
+      data: Buffer.from(encode_img, 'base64'),
+    };
+  });
 };
