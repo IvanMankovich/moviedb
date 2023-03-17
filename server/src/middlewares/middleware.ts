@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import { NextFunction, Response, Request } from 'express';
 import { ErrorService } from '../services/ErrorService';
-import { tokenService } from '../services/TokenService/TokenService';
+import { tokensService } from '../services/TokensService/TokensService';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ function checkAuth(req: Request, res: Response, next: NextFunction) {
       return next(ErrorService.UnauthorizedError());
     }
 
-    const userData = tokenService.validateAccessToken(accessToken);
+    const userData = tokensService.validateAccessToken(accessToken);
     if (!userData) {
       return next(ErrorService.UnauthorizedError());
     }

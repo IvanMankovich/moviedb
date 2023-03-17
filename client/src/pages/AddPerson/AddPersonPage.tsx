@@ -57,7 +57,10 @@ export const AddPersonPage = (): JSX.Element => {
     const personData = JSON.stringify(data);
 
     formData.append('personData', personData);
-    formData.append('personPic', values.personPic);
+
+    if (values.personPic) {
+      formData.append('personPic', values.personPic);
+    }
 
     if (values.personGalleryPhotos?.length) {
       values.personGalleryPhotos.forEach((file) =>

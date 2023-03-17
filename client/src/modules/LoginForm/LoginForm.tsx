@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Alert, Button, Checkbox, Form, Input, Typography } from 'antd';
+import { Alert, Button, Form, Input, Typography } from 'antd';
 import { ValidateErrorEntity } from 'rc-field-form/lib/interface';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { UserContextAction } from '../../context/AuthContext';
@@ -9,10 +9,8 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { IUserData } from '../../components/types';
 
 export interface ILoginFormData {
-  email: string;
-  // password: string;
-  userName: string;
-  // remember: boolean;
+  userEmail: string;
+  userPassword: string;
 }
 
 export interface ILoginResponse {
@@ -79,7 +77,7 @@ export const LoginForm = (): JSX.Element => {
     >
       <Form.Item
         label='Email'
-        name='email'
+        name='userEmail'
         rules={[{ required: true, message: 'Please input your email!', type: 'email' }]}
       >
         <Input />
@@ -87,7 +85,7 @@ export const LoginForm = (): JSX.Element => {
 
       <Form.Item
         label='Password'
-        name='password'
+        name='userPassword'
         rules={[{ required: true, message: 'Please input your password!' }]}
       >
         <Input.Password />
@@ -96,10 +94,6 @@ export const LoginForm = (): JSX.Element => {
       {errorMsg ? (
         <Alert message={'Authorization error'} description={errorMsg} type='error' />
       ) : null}
-
-      <Form.Item name='remember' valuePropName='checked'>
-        <Checkbox>Remember me</Checkbox>
-      </Form.Item>
 
       <Button type='primary' htmlType='submit'>
         Login

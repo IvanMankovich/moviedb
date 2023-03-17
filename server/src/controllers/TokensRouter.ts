@@ -2,16 +2,16 @@ import { Request, Response, Router } from 'express';
 import { REFRESH_TOKEN_COOKIE_NAME, REFRESH_TOKEN_MAX_AGE } from '../const';
 import { IUser, User } from '../models/User';
 import { ErrorService } from '../services/ErrorService';
-import { tokenService } from '../services/TokenService/TokenService';
+import { tokensService } from '../services/TokensService/TokensService';
 import { UserDto } from '../services/UserService/UserDto';
 
-const tokenRouter = Router();
+const tokensRouter = Router();
 
-tokenRouter.get('', async (req: Request, res: Response) => {
+tokensRouter.get('', async (req: Request, res: Response) => {
   try {
     const { refreshToken } = req.cookies;
     if (!refreshToken) return res.sendStatus(401);
-    const userData = await tokenService.refreshToken(refreshToken);
+    const userData = await tokensService.refreshToken(refreshToken);
     const currUser = await User.findById(userData.userData._id);
     const currUserToObj = currUser?.toObject() as IUser;
     res.cookie(REFRESH_TOKEN_COOKIE_NAME, userData.refreshToken, {
@@ -33,4 +33,4 @@ tokenRouter.get('', async (req: Request, res: Response) => {
   }
 });
 
-export { tokenRouter };
+export { tokensRouter };

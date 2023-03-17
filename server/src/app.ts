@@ -7,11 +7,13 @@ import cookieParser from 'cookie-parser';
 import { connectDB } from './db/dbConnect';
 
 import { usersRouter } from './controllers/UsersRouter';
-import { tokenRouter } from './controllers/TokenRouter';
+import { tokensRouter } from './controllers/TokensRouter';
 import { positionsRouter } from './controllers/PositionsRouter';
 import { movieRouter } from './controllers/Movie';
 import { countriesRouter } from './controllers/CountriesRouter';
 import { peopleRouter } from './controllers/PeopleRouter';
+import { gendersRouter } from './controllers/GendersRouter';
+import { genresRouter } from './controllers/GenresRouter';
 
 import { UserContext } from './utils/UserContext';
 
@@ -40,10 +42,12 @@ app.get('/', (req: Request, res: Response) => {
 });
 app.use('/users', usersRouter);
 app.use('/movies', movieRouter);
-app.use('/token', tokenRouter);
+app.use('/tokens', tokensRouter);
 app.use('/positions', positionsRouter);
 app.use('/countries', countriesRouter);
 app.use('/people', peopleRouter);
+app.use('/genres', genresRouter);
+app.use('/genders', gendersRouter);
 
 const listetingServer = app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 

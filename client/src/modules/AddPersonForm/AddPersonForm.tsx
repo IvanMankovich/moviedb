@@ -1,15 +1,5 @@
 import React, { useState } from 'react';
-import {
-  AutoComplete,
-  Button,
-  Form,
-  Input,
-  Select,
-  DatePicker,
-  Upload,
-  Alert,
-  Typography,
-} from 'antd';
+import { AutoComplete, Button, Form, Input, DatePicker, Upload, Alert, Typography } from 'antd';
 import moment from 'moment';
 import { UploadChangeParam } from 'antd/es/upload';
 import { PlusOutlined } from '@ant-design/icons';
@@ -17,8 +7,6 @@ import axios from 'axios';
 import { IAddPersonData } from '../../pages/AddPerson/AddPersonPage';
 
 import { AutocompleteCustom } from '../../components/AutocompleteCustom/AutocompleteCustom';
-
-const { Option } = Select;
 
 export interface IRegisterUserForm {
   addPerson(values: IAddPersonData): Promise<void>;
@@ -89,6 +77,18 @@ export const AddPersonForm = ({ addPerson, isLoading, errorMsg }: IRegisterUserF
     return response.data.data.map((i: { _id: string; personPosition: string }) => ({
       value: i._id,
       label: i.personPosition,
+    }));
+  };
+
+  const gendersRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/genders?qStr=${value}&qFields=genderName&pg=1&sortField=genderName&sortDir=1`,
+    );
+    return response.data.data.map((i: { _id: string; genderName: string }) => ({
+      value: i._id,
+      label: i.genderName,
     }));
   };
 
@@ -170,11 +170,12 @@ export const AddPersonForm = ({ addPerson, isLoading, errorMsg }: IRegisterUserF
           label='Gender'
           rules={[{ required: true, message: 'Please select gender!' }]}
         >
-          <Select placeholder='select gender'>
-            <Option value='male'>Male</Option>
-            <Option value='female'>Female</Option>
-            <Option value='other'>Other</Option>
-          </Select>
+          <AutocompleteCustom
+            searchCallback={gendersRequest}
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={`Select gender`}
+          />
         </Form.Item>
 
         <Form.Item name='personDoB' label='Date of birth' {...dobConfig}>

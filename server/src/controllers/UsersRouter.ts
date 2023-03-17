@@ -2,12 +2,12 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 import multer from 'multer';
 import { v4 } from 'uuid';
-import fs from 'fs';
 import { Request, Response, Router } from 'express';
 
 import { userService } from '../services/UserService/UserService';
 import { ErrorService } from '../services/ErrorService';
 import { REFRESH_TOKEN_COOKIE_NAME, REFRESH_TOKEN_MAX_AGE } from '../const';
+import { IUser } from '../models/User';
 
 dotenv.config();
 const usersRouter = Router();
@@ -25,15 +25,8 @@ const upload = multer({ storage });
 
 usersRouter.post('/signup', upload.single('userPic'), async (req: Request, res: Response) => {
   try {
-    const img = req.file?.path ? fs.readFileSync(req.file?.path) : '';
-    const encode_img = img.toString('base64');
-    const final_img = {
-      size: req.file?.size,
-      contentType: req.file?.mimetype,
-      data: Buffer.from(encode_img, 'base64'),
-    };
-
-    const user = await userService.createUser(req.body, final_img);
+    const userData = JSON.parse(req.body.userData) as IUser;
+    const user = await userService.createUser(userData, req.file);
     res.json(user);
   } catch (error) {
     if (error instanceof ErrorService) {
@@ -47,8 +40,8 @@ usersRouter.post('/signup', upload.single('userPic'), async (req: Request, res: 
 usersRouter.post('/login', async (req: Request, res: Response) => {
   try {
     const { refreshToken, accessToken, userData } = await userService.login({
-      email: req.body.email?.toLowerCase?.()?.trim?.(),
-      password: req.body.password,
+      userEmail: req.body.userEmail?.toLowerCase?.()?.trim?.(),
+      userPassword: req.body.userPassword,
     });
     res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, {
       httpOnly: true,
