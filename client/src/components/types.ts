@@ -15,8 +15,9 @@ export interface IMenuItem {
 
 export interface IUserData {
   userName: string;
-  email: string;
-  favoriteGenres: string[];
-  about: string;
-  userPic?: string;
+  userEmail: string;
+  userPassword: string;
+  userFavoriteGenres: string[];
+  userDescription: string;
+  userDoB: string;
 }

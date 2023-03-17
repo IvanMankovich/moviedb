@@ -4,37 +4,45 @@ import * as dotenv from 'dotenv';
 import { User } from '../../models/User';
 import { IUser } from '../../models/User';
 import { ErrorService } from '../ErrorService';
-import { getGIRegEx } from '../../utils/helpers';
+import { getGIRegEx, parseFiles } from '../../utils/helpers';
 import { UserDto } from './UserDto';
-import { tokenService } from '../TokenService/TokenService';
+import { tokensService } from '../TokensService/TokensService';
+import { CreateUser } from './helpers';
+import { assetsService } from '../AssetsService/AssetsService';
 
 dotenv.config();
 
 class UserService {
-  async createUser(
-    userData: IUser,
-    file: {
-      contentType?: string;
-      data: Buffer;
-      size?: number;
-    },
-  ) {
-    const isUserExists = await this.isUserExists(userData);
-    if (!isUserExists) {
-      const password = await bcrypt.hash(userData.password, 10);
-      const newUser = new User({ ...userData, password, userPic: file });
-      const result = await newUser.save();
-      return result;
+  async createUser(userData: IUser, file?: Express.Multer.File) {
+    if (userData) {
+      const user = new CreateUser(userData);
+
+      const isUserExists = await this.isUserExists(user);
+      if (!isUserExists) {
+        const password = await bcrypt.hash(userData.userPassword, 10);
+        const newUser = new User({ ...userData, userPassword: password });
+
+        if (file) {
+          const userPicToAdd = parseFiles([file]);
+          const userPic = await assetsService.addAssets(userPicToAdd);
+          newUser.userPic = userPic[0]._id;
+        }
+
+        const result = await newUser.save();
+        return result;
+      } else {
+        throw ErrorService.Conflict('Users already exists', isUserExists);
+      }
     } else {
-      throw ErrorService.Conflict('Users already exists', isUserExists);
+      throw ErrorService.Conflict('User data not provided');
     }
   }
 
-  async isUserExists(params: Pick<IUser, 'userName' | 'email'>) {
+  async isUserExists(params: Pick<IUser, 'userName' | 'userEmail'>) {
     const userNameToCompare = params.userName.toLowerCase();
-    const emailToCompare = params.email.toLowerCase();
+    const emailToCompare = params.userEmail.toLowerCase();
     const result = await User.findOne({
-      $or: [{ userName: getGIRegEx(userNameToCompare) }, { email: getGIRegEx(emailToCompare) }],
+      $or: [{ userName: getGIRegEx(userNameToCompare) }, { userEmail: getGIRegEx(emailToCompare) }],
     });
 
     if (result) {
@@ -42,8 +50,8 @@ class UserService {
       if (userNameToCompare === result.userName.toLowerCase()) {
         errors.push(`User '${params.userName}' already exists.`);
       }
-      if (emailToCompare === result.email.toLowerCase()) {
-        errors.push(`Mail '${params.email}' already used.`);
+      if (emailToCompare === result.userEmail.toLowerCase()) {
+        errors.push(`Mail '${params.userEmail}' already used.`);
       }
       return errors;
     } else {
@@ -51,21 +59,21 @@ class UserService {
     }
   }
 
-  async login(params: Pick<IUser, 'email' | 'password'>) {
-    const user = await User.findOne({ email: getGIRegEx(params.email) });
+  async login(params: Pick<IUser, 'userEmail' | 'userPassword'>) {
+    const user = await User.findOne({ userEmail: getGIRegEx(params.userEmail) });
     if (user) {
-      const match = await bcrypt.compare(params.password, user.password);
+      const match = await bcrypt.compare(params.userPassword, user.userPassword);
       if (!match) {
         throw ErrorService.UnauthorizedError('Wrong credentials', ['Wrong credentials']);
       } else {
-        const { _id, userName, email } = user;
-        const { accessToken, refreshToken } = tokenService.generateTokens({
+        const { _id, userName, userEmail } = user;
+        const { accessToken, refreshToken } = tokensService.generateTokens({
           _id: _id.toString(),
           userName,
-          email,
+          userEmail,
         });
 
-        await tokenService.saveToken(_id.toString(), refreshToken);
+        await tokensService.saveToken(_id.toString(), refreshToken);
         const userToObj = user.toObject() as IUser;
 
         return {
@@ -83,7 +91,7 @@ class UserService {
     if (!refreshToken) {
       throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
     } else {
-      await tokenService.removeToken(refreshToken).catch(() => {
+      await tokensService.removeToken(refreshToken).catch(() => {
         throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
       });
     }

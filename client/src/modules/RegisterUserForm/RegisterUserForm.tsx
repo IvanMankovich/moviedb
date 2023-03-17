@@ -1,29 +1,14 @@
 import React from 'react';
 import moment from 'moment';
+import axios from 'axios';
 
 import { PlusOutlined } from '@ant-design/icons';
-import { Alert, Button, DatePicker, Form, Input, Select, Typography, Upload } from 'antd';
+import { Alert, Button, DatePicker, Form, Input, Typography, Upload } from 'antd';
 import { UploadChangeParam } from 'antd/es/upload';
+import { IRegisterUserData } from '../../pages/Register/RegisterPage';
+import { AutocompleteCustom } from '../../components/AutocompleteCustom/AutocompleteCustom';
 
 import './RegisterUserForm.scss';
-
-export interface IOption {
-  label: string;
-  value: string;
-}
-
-export interface IRegisterUserData {
-  userName: string;
-  email: string;
-  password: string;
-  favoriteGenres: string[];
-  about: string;
-  dob?: Date;
-}
-
-export interface IRegisterFormData {
-  user: IRegisterUserData;
-}
 
 export interface IRegisterUserForm {
   registerUser(values: IRegisterUserData): Promise<void>;
@@ -60,24 +45,23 @@ export const RegisterUserForm = ({
     rules: [{ type: 'object' as const }],
   };
 
-  const handleChange = (value: string[]) => {
-    console.log(`selected ${value}`);
-  };
-
-  const options: IOption[] = [];
-
-  for (let i = 10; i < 36; i++) {
-    options.push({
-      label: i.toString(36) + i,
-      value: i.toString(36) + i,
-    });
-  }
-
   const normFile = (e: UploadChangeParam) => {
     if (Array.isArray(e)) {
       return e;
     }
     return e?.file;
+  };
+
+  const genresRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/genres?qStr=${value}&qFields=genreName&pg=1&sortField=genreName&sortDir=1`,
+    );
+    return response.data.data.map((i: { _id: string; genreName: string }) => ({
+      value: i._id,
+      label: i.genreName,
+    }));
   };
 
   return (
@@ -101,24 +85,26 @@ export const RegisterUserForm = ({
         >
           <Input />
         </Form.Item>
-        <Form.Item name={'email'} label='Email' rules={[{ required: true, type: 'email' }]}>
+        <Form.Item name={'userEmail'} label='Email' rules={[{ required: true, type: 'email' }]}>
           <Input />
         </Form.Item>
         <Form.Item
           label='Password'
-          name='password'
+          name='userPassword'
           rules={[{ required: true, message: 'Please input your password!' }]}
         >
           <Input.Password />
         </Form.Item>
-        <Form.Item name={'favoriteGenres'} label='I like:'>
-          <Select
+        <Form.Item name={'userFavoriteGenres'} label='I like:'>
+          <AutocompleteCustom
+            searchCallback={genresRequest}
             mode='multiple'
             allowClear
             style={{ width: '100%' }}
-            placeholder='Select genre'
-            onChange={handleChange}
-            options={options}
+            placeholder={`Select favorite genres`}
+            showArrow={false}
+            filterOption={false}
+            showSearch
           />
         </Form.Item>
 
@@ -134,7 +120,7 @@ export const RegisterUserForm = ({
           </Upload>
         </Form.Item>
 
-        <Form.Item name={'dob'} label='DoB' {...config}>
+        <Form.Item name={'userDoB'} label='DoB' {...config}>
           <DatePicker
             disabledDate={(current) => {
               const customDate = moment().format('YYYY-MM-DD');
@@ -142,7 +128,7 @@ export const RegisterUserForm = ({
             }}
           />
         </Form.Item>
-        <Form.Item name={'about'} label='About me'>
+        <Form.Item name={'userDescription'} label='About me'>
           <Input.TextArea />
         </Form.Item>
         <Form.Item>

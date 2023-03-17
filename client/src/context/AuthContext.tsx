@@ -54,7 +54,7 @@ export const AuthContextProvider = ({ children }: IAuthContextProvider) => {
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/token`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/tokens`, {
         withCredentials: true,
       });
       const { userData, accessToken } = response.data;

@@ -21,6 +21,7 @@ export type IAutocompleteCustom = ExtendedSelectProps & {
 
 export const AutocompleteCustom = ({ searchCallback, ...props }: IAutocompleteCustom) => {
   const [options, setOptions] = useState<IOption[]>([]);
+  const [isLoading, setLoading] = useState<boolean>(false);
 
   let timeout: ReturnType<typeof setTimeout> | null;
 
@@ -31,8 +32,10 @@ export const AutocompleteCustom = ({ searchCallback, ...props }: IAutocompleteCu
     }
 
     const makeRequest = async () => {
+      setLoading(true);
       const data = await searchCallback?.(value);
       callback(data as IOption[]);
+      setLoading(false);
     };
 
     timeout = setTimeout(makeRequest, 300);
@@ -46,5 +49,18 @@ export const AutocompleteCustom = ({ searchCallback, ...props }: IAutocompleteCu
     }
   };
 
-  return <AtndSelect onSearch={handleSearch} options={options} {...props} />;
+  return (
+    <AtndSelect
+      loading={isLoading}
+      showSearch={props.onSearch ? true : undefined}
+      onSearch={props.showSearch ? handleSearch : undefined}
+      options={options}
+      onDropdownVisibleChange={(open: boolean) => {
+        if (open) {
+          fetch('', setOptions);
+        }
+      }}
+      {...props}
+    />
+  );
 };

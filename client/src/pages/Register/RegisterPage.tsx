@@ -15,12 +15,30 @@ export interface IOption {
 
 export interface IRegisterUserData {
   userName: string;
-  email: string;
-  password: string;
-  favoriteGenres: string[];
-  about: string;
-  userPic: File;
-  dob?: Date;
+  userEmail: string;
+  userPassword: string;
+  userFavoriteGenres: string[];
+  userDescription: string;
+  userDoB?: Date;
+  userPic?: File;
+}
+
+class UserDto {
+  userName;
+  userEmail;
+  userPassword;
+  userFavoriteGenres;
+  userDescription;
+  userDoB;
+
+  constructor(model: IRegisterUserData) {
+    this.userName = model.userName;
+    this.userEmail = model.userEmail;
+    this.userPassword = model.userPassword;
+    this.userFavoriteGenres = model.userFavoriteGenres;
+    this.userDescription = model.userDescription;
+    this.userDoB = model.userDoB;
+  }
 }
 
 export const RegisterPage = (): JSX.Element => {
@@ -34,16 +52,14 @@ export const RegisterPage = (): JSX.Element => {
   const registerUser = async (values: IRegisterUserData): Promise<void> => {
     const formData = new FormData();
 
-    formData.append('userName', values.userName);
-    formData.append('email', values.email);
-    formData.append('password', values.password);
-    formData.append(
-      'favoriteGenres',
-      values.favoriteGenres?.length?.toString?.() ?? values.favoriteGenres,
-    );
-    formData.append('about', values.about ?? '');
-    formData.append('userPic', values.userPic);
-    formData.append('dob', values.dob?.toISOString?.() ?? '');
+    const rawUserData = new UserDto(values);
+    const userData = JSON.stringify(rawUserData);
+
+    if (values.userPic) {
+      formData.append('userPic', values.userPic);
+    }
+
+    formData.append('userData', userData);
 
     try {
       setLoading(true);

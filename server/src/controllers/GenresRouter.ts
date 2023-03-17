@@ -1,16 +1,16 @@
 import { Request, Response, Router } from 'express';
 import { ErrorService } from '../services/ErrorService';
-import { countriesService } from '../services/CountriesService/CountriesService';
+import { genresService } from '../services/GenresService/GenresService';
 import { IQuery } from '../services/types';
 
-const countriesRouter = Router();
+const genresRouter = Router();
 
-countriesRouter.get('', async (req: Request, res: Response) => {
+genresRouter.get('', async (req: Request, res: Response) => {
   try {
     const { query } = req;
-    const countriesData = await countriesService.findCountries(query as IQuery);
+    const genresData = await genresService.findGenres(query as IQuery);
 
-    res.json(countriesData);
+    res.json(genresData);
   } catch (error) {
     if (error instanceof ErrorService) {
       res.status(error.status).json(error);
@@ -20,4 +20,4 @@ countriesRouter.get('', async (req: Request, res: Response) => {
   }
 });
 
-export { countriesRouter };
+export { genresRouter };

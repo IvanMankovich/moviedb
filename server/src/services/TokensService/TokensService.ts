@@ -11,8 +11,8 @@ dotenv.config();
 
 const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
-class TokenService {
-  generateTokens(payload: Pick<IUser, '_id' | 'userName' | 'email'>) {
+class TokensService {
+  generateTokens(payload: Pick<IUser, '_id' | 'userName' | 'userEmail'>) {
     const accessToken = jwt.sign(payload, ACCESS_TOKEN_SECRET!, {
       expiresIn: ACCESS_TOKEN_MAX_AGE / 1000,
     });
@@ -69,16 +69,16 @@ class TokenService {
     if (!refreshToken) {
       throw ErrorService.UnauthorizedError();
     }
-    const userData = tokenService.validateRefreshToken(refreshToken) as IUser;
-    const tokenFromDb = await tokenService.findToken(refreshToken);
+    const userData = this.validateRefreshToken(refreshToken) as IUser;
+    const tokenFromDb = await this.findToken(refreshToken);
     if (!userData || !tokenFromDb) {
       throw ErrorService.UnauthorizedError();
     } else {
       const user = await User.findById(userData._id.toString());
       if (user) {
         const userDto = new UserDto(user?.toObject());
-        const tokens = tokenService.generateTokens({ ...userDto });
-        await tokenService.saveToken(userDto._id, tokens.refreshToken);
+        const tokens = this.generateTokens({ ...userDto });
+        await this.saveToken(userDto._id, tokens.refreshToken);
         return { ...tokens, userData: userDto };
       } else {
         throw ErrorService.UnauthorizedError(`User doesn't exist`, [`User doesn't exist`]);
@@ -87,4 +87,4 @@ class TokenService {
   }
 }
 
-export const tokenService = new TokenService();
+export const tokensService = new TokensService();
