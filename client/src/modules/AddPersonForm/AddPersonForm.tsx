@@ -72,11 +72,11 @@ export const AddPersonForm = ({ addPerson, isLoading, errorMsg }: IRegisterUserF
     const response = await axios.get(
       `${
         import.meta.env.VITE_API_URL
-      }/positions?qStr=${value}&qFields=personPosition&pg=1&sortField=personPosition&sortDir=1`,
+      }/positions?qStr=${value}&qFields=positionName&pg=1&sortField=positionName&sortDir=1`,
     );
-    return response.data.data.map((i: { _id: string; personPosition: string }) => ({
+    return response.data.data.map((i: { _id: string; positionName: string }) => ({
       value: i._id,
-      label: i.personPosition,
+      label: i.positionName,
     }));
   };
 

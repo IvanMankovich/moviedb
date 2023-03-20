@@ -1,8 +1,9 @@
+import { Types } from 'mongoose';
 import { IPerson, Person } from '../../models/PersonModel';
 import { parseFiles } from '../../utils/helpers';
 import { assetsService } from '../AssetsService/AssetsService';
 import { ErrorService } from '../ErrorService';
-import { CreatePerson } from './helpers';
+import { PersonBuilder, PersonDto } from './helpers';
 
 class PeopleService {
   async createPerson(
@@ -12,7 +13,7 @@ class PeopleService {
     },
   ) {
     if (personData) {
-      const person = new CreatePerson(personData);
+      const person = new PersonBuilder(personData);
 
       const isPersonExists = await this.isPersonExists(person);
       if (!isPersonExists) {
@@ -68,6 +69,87 @@ class PeopleService {
       }
     } else {
       throw ErrorService.BadRequest('Person data not provided');
+    }
+  }
+
+  async getPersonById(id: string) {
+    try {
+      const isExists = await this.checkPersonId(id);
+      if (isExists) {
+        const people = await Person.aggregate([
+          { $match: { _id: new Types.ObjectId(id) } },
+          {
+            $lookup: {
+              from: 'assets',
+              localField: 'personPic',
+              foreignField: '_id',
+              as: 'personPic',
+            },
+          },
+          { $unwind: '$personPic' },
+          {
+            $lookup: {
+              from: 'assets',
+              localField: 'personGalleryPhotos',
+              foreignField: '_id',
+              as: 'personGalleryPhotos',
+            },
+          },
+          {
+            $lookup: {
+              from: 'genders',
+              localField: 'personGender',
+              foreignField: '_id',
+              as: 'personGender',
+            },
+          },
+          { $unwind: '$personGender' },
+          {
+            $lookup: {
+              from: 'countries',
+              localField: 'personPlaceOfBirth',
+              foreignField: '_id',
+              as: 'personPlaceOfBirth',
+            },
+          },
+          { $unwind: '$personPlaceOfBirth' },
+          {
+            $lookup: {
+              from: 'positions',
+              localField: 'personPositions',
+              foreignField: '_id',
+              as: 'personPositions',
+            },
+          },
+        ]);
+        const person = people?.[0];
+
+        if (person) {
+          return new PersonDto(person);
+        } else {
+          throw ErrorService.NotFound('Person not found');
+        }
+      } else {
+        throw ErrorService.NotFound('Person not found');
+      }
+    } catch (err) {
+      throw ErrorService.NotFound(err?.toString?.());
+    }
+  }
+
+  async checkPersonId(id?: string) {
+    try {
+      if (id) {
+        const isExists = await Person.findById(id);
+        if (isExists) {
+          return true;
+        }
+        return false;
+      } else {
+        throw ErrorService.BadRequest('Person id not provided');
+      }
+    } catch (err) {
+      throw ErrorService.BadRequest(err?.toString?.());
     }
   }
 }

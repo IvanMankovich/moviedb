@@ -5,10 +5,10 @@ import { IQuery } from '../types';
 import { PipelineStage } from 'mongoose';
 
 class PositionsService {
-  async addPosition(personPosition: string) {
-    const isPositionExists = await this.isPositionExists(personPosition);
+  async addPosition(positionName: string) {
+    const isPositionExists = await this.isPositionExists(positionName);
     if (!isPositionExists) {
-      const newPosition = new Position({ personPosition });
+      const newPosition = new Position({ positionName });
       const result = await newPosition.save();
       return result;
     } else {
@@ -16,12 +16,12 @@ class PositionsService {
     }
   }
 
-  async isPositionExists(personPosition: string) {
-    const result = await Position.findOne({ personPosition: getGIRegEx(personPosition) });
+  async isPositionExists(positionName: string) {
+    const result = await Position.findOne({ positionName: getGIRegEx(positionName) });
 
     if (result) {
       const errors: string[] = [];
-      errors.push(`Position '${personPosition}' already exists.`);
+      errors.push(`Position '${positionName}' already exists.`);
 
       return errors;
     } else {
@@ -36,10 +36,10 @@ class PositionsService {
 
   async findPositions({
     qStr = '',
-    qFields = ['personPosition'],
+    qFields = ['positionName'],
     limit = '10',
     pg = '1',
-    sortField = 'personPosition',
+    sortField = 'positionName',
     sortDir = '1',
   }: IQuery) {
     const searchObj = getSearchStr(qFields, qStr);

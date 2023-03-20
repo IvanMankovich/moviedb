@@ -5,9 +5,8 @@ import { User } from '../../models/User';
 import { IUser } from '../../models/User';
 import { ErrorService } from '../ErrorService';
 import { getGIRegEx, parseFiles } from '../../utils/helpers';
-import { UserDto } from './UserDto';
 import { tokensService } from '../TokensService/TokensService';
-import { CreateUser } from './helpers';
+import { UsersBuilder, UserDto } from './helpers';
 import { assetsService } from '../AssetsService/AssetsService';
 import { Types } from 'mongoose';
 
@@ -16,7 +15,7 @@ dotenv.config();
 class UserService {
   async createUser(userData: IUser, file?: Express.Multer.File) {
     if (userData) {
-      const user = new CreateUser(userData);
+      const user = new UsersBuilder(userData);
 
       const isUserExists = await this.isUserExists(user);
       if (!isUserExists) {

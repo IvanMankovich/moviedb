@@ -2,11 +2,11 @@ import { model, Schema } from 'mongoose';
 
 export interface IPosition {
   _id: string;
-  personPosition: string;
+  positionName: string;
 }
 
 const positionSchema = new Schema({
-  personPosition: {
+  positionName: {
     type: Schema.Types.String,
     unique: true,
     required: true,
