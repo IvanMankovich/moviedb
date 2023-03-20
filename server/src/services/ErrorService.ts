@@ -19,4 +19,8 @@ export class ErrorService extends Error {
   static Conflict(message = 'Data conflict', errors: string[] = []) {
     return new ErrorService(409, message, errors);
   }
+
+  static NotFound(message = 'Not found', errors: string[] = []) {
+    return new ErrorService(404, message, errors);
+  }
 }

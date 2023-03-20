@@ -41,7 +41,7 @@ const personSchema = new Schema({
     type: Schema.Types.ObjectId,
   },
   personGender: {
-    type: Schema.Types.String,
+    type: Schema.Types.ObjectId,
     index: 1,
   },
   personDoB: {

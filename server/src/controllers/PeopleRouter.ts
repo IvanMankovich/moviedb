@@ -50,4 +50,21 @@ peopleRouter.post(
   },
 );
 
+peopleRouter.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const personId = req.params.id;
+    if (!personId) {
+      throw ErrorService.BadRequest('Person data not provided');
+    }
+    const personData = await peopleService.getPersonById(personId);
+    res.json(personData);
+  } catch (error) {
+    if (error instanceof ErrorService) {
+      res.status(error.status).json(error);
+    } else {
+      res.status(500).json(error);
+    }
+  }
+});
+
 export { peopleRouter };
