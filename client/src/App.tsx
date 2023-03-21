@@ -19,6 +19,7 @@ import { AddProductPage } from './pages/AddProduct/AddProductPage';
 import { ProductPage } from './pages/Product/ProductPage';
 import { AddPersonPage } from './pages/AddPerson/AddPersonPage';
 import { PersonPage } from './pages/Person/PersonPage';
+import { PeoplePage } from './pages/People/PeoplePage';
 
 import { Theme } from './types/types';
 
@@ -47,7 +48,8 @@ const App = (): JSX.Element => {
         <Route path='add-product' element={<AddProductPage />} />
         <Route path='product/:id' element={<ProductPage />} />
         <Route path='add-person' element={<AddPersonPage />} />
-        <Route path='person/:id' element={<PersonPage />} />
+        <Route path='people/:id' element={<PersonPage />} />
+        <Route path='people' element={<PeoplePage />} />
 
         <Route path='*' element={<NotFoundPage />} />
       </Routes>

@@ -3,6 +3,7 @@ import { IPerson, Person } from '../../models/PersonModel';
 import { parseFiles } from '../../utils/helpers';
 import { assetsService } from '../AssetsService/AssetsService';
 import { ErrorService } from '../ErrorService';
+import { IPeopleQuery } from '../types';
 import { PersonBuilder, PersonDto } from './helpers';
 
 class PeopleService {
@@ -86,7 +87,7 @@ class PeopleService {
               as: 'personPic',
             },
           },
-          { $unwind: '$personPic' },
+          { $unwind: { path: '$personPic', preserveNullAndEmptyArrays: true } },
           {
             $lookup: {
               from: 'assets',
@@ -112,7 +113,7 @@ class PeopleService {
               as: 'personPlaceOfBirth',
             },
           },
-          { $unwind: '$personPlaceOfBirth' },
+          { $unwind: { path: '$personPlaceOfBirth', preserveNullAndEmptyArrays: true } },
           {
             $lookup: {
               from: 'positions',
@@ -150,6 +151,69 @@ class PeopleService {
       }
     } catch (err) {
       throw ErrorService.BadRequest(err?.toString?.());
+    }
+  }
+
+  async getPeopleByParams({
+    limit = '10',
+    pg = '1',
+    sortField = 'personName',
+    sortDir = '-1',
+    personDoB,
+    personGender,
+    personName,
+    personPlaceOfBirth,
+    personPositions,
+  }: IPeopleQuery) {
+    try {
+      const people = await Person.aggregate([
+        // { $match: { } },
+        {
+          $lookup: {
+            from: 'assets',
+            localField: 'personPic',
+            foreignField: '_id',
+            as: 'personPic',
+          },
+        },
+        { $unwind: { path: '$personPic', preserveNullAndEmptyArrays: true } },
+        {
+          $lookup: {
+            from: 'genders',
+            localField: 'personGender',
+            foreignField: '_id',
+            as: 'personGender',
+          },
+        },
+        {
+          $lookup: {
+            from: 'countries',
+            localField: 'personPlaceOfBirth',
+            foreignField: '_id',
+            as: 'personPlaceOfBirth',
+          },
+        },
+        {
+          $lookup: {
+            from: 'positions',
+            localField: 'personPositions',
+            foreignField: '_id',
+            as: 'personPositions',
+          },
+        },
+        {
+          $project: {
+            personDescription: 0,
+            personFullName: 0,
+            personSocials: 0,
+            personWebsite: 0,
+            personGalleryPhotos: 0,
+          },
+        },
+      ]);
+      return people;
+    } catch (err) {
+      throw new Error(err?.toString?.());
     }
   }
 }

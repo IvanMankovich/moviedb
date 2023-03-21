@@ -1,0 +1,89 @@
+@mixin threeCardBase {
+  width: calc(33.3333333333% - 16px);
+  margin-bottom: 40px;
+}
+
+@mixin fourCardBase {
+  width: calc(25% - 18px);
+}
+
+@mixin fourCardBaseCenter {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.cards-container {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+
+  &__item {
+    display: inline-block;
+    width: calc(50% - 8px);
+    box-sizing: border-box;
+    margin-bottom: 16px;
+
+    &:nth-child(2n + 1) {
+      margin-right: 8px;
+    }
+
+    &:nth-child(2n + 2) {
+      margin-left: 8px;
+    }
+  }
+
+  @media screen and (min-width: 680px) {
+    padding: 0;
+    margin-top: 40px;
+
+    &__item {
+      &:nth-child(2n + 1) {
+        margin-right: 0;
+      }
+
+      &:nth-child(2n + 2) {
+        margin-left: 0;
+      }
+
+      &:nth-child(3n + 1) {
+        @include threeCardBase();
+        margin-right: 12px;
+      }
+
+      &:nth-child(3n + 2) {
+        @include threeCardBase();
+        margin-left: 12px;
+        margin-right: 12px;
+      }
+
+      &:nth-child(3n + 3) {
+        @include threeCardBase();
+        margin-left: 12px;
+      }
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
+    &__item:nth-child(4n + 1) {
+      @include fourCardBase();
+      margin-right: 12px;
+      margin-left: 0;
+    }
+
+    &__item:nth-child(4n + 2) {
+      @include fourCardBase();
+      @include fourCardBaseCenter();
+    }
+
+    &__item:nth-child(4n + 3) {
+      @include fourCardBase();
+      @include fourCardBaseCenter();
+    }
+
+    &__item:nth-child(4n + 4) {
+      @include fourCardBase();
+      margin-left: 12px;
+      margin-right: 0;
+    }
+  }
+}
