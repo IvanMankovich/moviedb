@@ -34,6 +34,7 @@ const personSchema = new Schema({
   },
   personPositions: {
     type: [Schema.Types.ObjectId],
+    ref: 'Position',
     required: true,
     index: 1,
   },
@@ -42,6 +43,7 @@ const personSchema = new Schema({
   },
   personGender: {
     type: Schema.Types.ObjectId,
+    ref: 'Gender',
     index: 1,
   },
   personDoB: {
@@ -50,6 +52,7 @@ const personSchema = new Schema({
   },
   personPlaceOfBirth: {
     type: Schema.Types.ObjectId,
+    ref: 'Country',
     index: 1,
   },
   personWebsite: {

@@ -3,6 +3,7 @@ import React from 'react';
 import { FavoriteIcon } from '../components/Icon/FavoriteIcon/FavoriteIcon';
 import { HomeIcon } from '../components/Icon/HomeIcon/HomeIcon';
 import { MovieFilterIcon } from '../components/Icon/MovieFilterIcon/MovieFilterIcon';
+import { PeopleIcon } from '../components/Icon/PeopleIcon/PeopleIcon';
 import { RecommendedIcon } from '../components/Icon/RecommendedIcon/RecommendedIcon';
 import { SearchIcon } from '../components/Icon/SearchIcon/SearchIcon';
 import { StarIcon } from '../components/Icon/StarIcon/StarIcon';
@@ -69,6 +70,18 @@ export const mainMenuItems: IMenuItem[] = [
       </>
     ),
     path: 'top-rated',
+  },
+  {
+    key: 'people',
+    label: (
+      <>
+        <div className='menu-item__icon'>
+          <PeopleIcon />
+        </div>
+        <p className='menu-item__text'>People</p>
+      </>
+    ),
+    path: 'people',
   },
   {
     key: 'catalogue',
