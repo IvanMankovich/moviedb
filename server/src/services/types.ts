@@ -7,14 +7,9 @@ export interface IQuery {
   sortDir?: '1' | '-1';
 }
 
-export interface IPeopleQuery {
+export interface IPeopleQuery extends IQuery {
   personDoB?: string;
   personGender?: string;
-  personName?: string;
   personPlaceOfBirth?: string;
   personPositions?: string | string[];
-  limit?: string;
-  pg?: string;
-  sortField?: string;
-  sortDir?: '1' | '-1';
 }

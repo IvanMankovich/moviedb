@@ -1,6 +1,6 @@
-import { Types } from 'mongoose';
+import { PipelineStage, Types } from 'mongoose';
 import { IPerson, Person } from '../../models/PersonModel';
-import { parseFiles } from '../../utils/helpers';
+import { getDoB, getSearchStr, parseFiles } from '../../utils/helpers';
 import { assetsService } from '../AssetsService/AssetsService';
 import { ErrorService } from '../ErrorService';
 import { IPeopleQuery } from '../types';
@@ -158,14 +158,45 @@ class PeopleService {
     limit = '10',
     pg = '1',
     sortField = 'personName',
-    sortDir = '-1',
+    sortDir = '1',
     personDoB,
     personGender,
-    personName,
     personPlaceOfBirth,
     personPositions,
+    qFields = 'personName',
+    qStr = '',
   }: IPeopleQuery) {
     try {
+      const searchObj = getSearchStr(qFields, qStr);
+
+      const dob = getDoB(personDoB);
+
+      console.log(personDoB, personGender, personPlaceOfBirth, personPositions, dob);
+      const aggregateParams: PipelineStage[] = [
+        {
+          $match: {
+            searchObj,
+          },
+        },
+      ];
+
+      if (sortField && sortDir) {
+        aggregateParams.push({
+          $sort: { [sortField]: +sortDir as 1 | -1 },
+        });
+      }
+
+      aggregateParams.push({
+        $facet: {
+          people: [{ $skip: (+pg - 1) * +limit }, { $limit: +limit }],
+          totalCount: [
+            {
+              $count: 'count',
+            },
+          ],
+        },
+      });
+
       const people = await Person.aggregate([
         // { $match: { } },
         {
@@ -185,6 +216,7 @@ class PeopleService {
             as: 'personGender',
           },
         },
+        { $unwind: { path: '$personGender', preserveNullAndEmptyArrays: true } },
         {
           $lookup: {
             from: 'countries',
@@ -193,6 +225,7 @@ class PeopleService {
             as: 'personPlaceOfBirth',
           },
         },
+        { $unwind: { path: '$personPlaceOfBirth', preserveNullAndEmptyArrays: true } },
         {
           $lookup: {
             from: 'positions',
@@ -202,16 +235,23 @@ class PeopleService {
           },
         },
         {
-          $project: {
-            personDescription: 0,
-            personFullName: 0,
-            personSocials: 0,
-            personWebsite: 0,
-            personGalleryPhotos: 0,
+          $facet: {
+            people: [{ $skip: (+pg - 1) * +limit }, { $limit: +limit }],
+            totalCount: [
+              {
+                $count: 'count',
+              },
+            ],
           },
         },
       ]);
-      return people;
+
+      const data = {
+        data: people[0].people,
+        totalPages: people[0].totalCount[0] ? Math.ceil(people[0].totalCount[0].count / +limit) : 0,
+        currentPage: +pg,
+      };
+      return data;
     } catch (err) {
       throw new Error(err?.toString?.());
     }

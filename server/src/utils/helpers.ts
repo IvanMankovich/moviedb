@@ -23,3 +23,15 @@ export const parseFiles = (files: Express.Multer.File[]) => {
     };
   });
 };
+
+export const getDoB = (dob?: string | string[]) => {
+  if (!dob) {
+    return null;
+  } else {
+    if (Array.isArray(dob)) {
+      return [];
+    } else {
+      return [];
+    }
+  }
+};
