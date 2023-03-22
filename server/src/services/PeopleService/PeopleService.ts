@@ -1,6 +1,6 @@
 import { PipelineStage, Types } from 'mongoose';
 import { IPerson, Person } from '../../models/PersonModel';
-import { getDoB, getSearchStr, parseFiles } from '../../utils/helpers';
+import { getSearchStr, parseFiles } from '../../utils/helpers';
 import { assetsService } from '../AssetsService/AssetsService';
 import { ErrorService } from '../ErrorService';
 import { IPeopleQuery } from '../types';
@@ -159,7 +159,8 @@ class PeopleService {
     pg = '1',
     sortField = 'personName',
     sortDir = '1',
-    personDoB,
+    personDoBfrom,
+    personDoBto,
     personGender,
     personPlaceOfBirth,
     personPositions,
@@ -169,9 +170,40 @@ class PeopleService {
     try {
       const searchObj = getSearchStr(qFields, qStr);
 
-      const dob = getDoB(personDoB);
+      const matchParams = [];
 
-      console.log(personDoB, personGender, personPlaceOfBirth, personPositions, dob);
+      if (searchObj) {
+        matchParams.push(searchObj);
+      }
+
+      if (personGender) {
+        matchParams.push({ personGender: new Types.ObjectId(personGender) });
+      }
+
+      if (personPlaceOfBirth) {
+        matchParams.push({ personPlaceOfBirth: new Types.ObjectId(personPlaceOfBirth) });
+      }
+
+      if (personPositions) {
+        const positions = personPositions.split(',');
+        const q = positions.map((v) => new Types.ObjectId(v));
+        matchParams.push({ personPositions: { $all: q } });
+      }
+
+      if (personDoBfrom || personDoBto) {
+        const personDoB: {
+          $gte?: Date;
+          $lte?: Date;
+        } = {};
+        if (personDoBfrom) {
+          personDoB.$gte = new Date(personDoBfrom);
+        }
+        if (personDoBto) {
+          personDoB.$lte = new Date(personDoBto);
+        }
+        matchParams.push({ personDoB: personDoB });
+      }
+
       const aggregateParams: PipelineStage[] = [
         {
           $match: {
@@ -198,7 +230,9 @@ class PeopleService {
       });
 
       const people = await Person.aggregate([
-        // { $match: { } },
+        {
+          $match: { $and: [...matchParams] },
+        },
         {
           $lookup: {
             from: 'assets',
