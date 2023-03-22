@@ -63,8 +63,8 @@ export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchP
 
       {errorMsg ? <Alert message={'Search error'} description={errorMsg} type='error' /> : null}
       <Form {...layout} onFinish={searchPerson} className='register-user-form' disabled={isLoading}>
-        <Form.Item name={'personName'} label='Person name'>
-          <Input />
+        <Form.Item name={'qStr'} label='Person name'>
+          <Input placeholder={`Person name`} />
         </Form.Item>
 
         <Form.Item
@@ -92,11 +92,7 @@ export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchP
           />
         </Form.Item>
 
-        <Form.Item
-          name={'personPositions'}
-          label='Position:'
-          rules={[{ required: true, message: `Please input person's position!`, type: 'array' }]}
-        >
+        <Form.Item name={'personPositions'} label='Position:' rules={[{ type: 'array' }]}>
           <AutocompleteCustom
             searchCallback={positionsRequest}
             mode='multiple'

@@ -11,5 +11,7 @@ export interface IPeopleQuery extends IQuery {
   personDoB?: string;
   personGender?: string;
   personPlaceOfBirth?: string;
-  personPositions?: string | string[];
+  personPositions?: string;
+  personDoBfrom?: Date;
+  personDoBto?: Date;
 }

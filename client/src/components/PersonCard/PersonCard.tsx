@@ -13,7 +13,7 @@ export interface IPersonCard {
 
 export const PersonCard = ({ imgSrc, title, description, cardClassName, link }: IPersonCard) => {
   return (
-    <Card className={cardClassName} hoverable cover={<ImgFallback src={imgSrc} />}>
+    <Card className={cardClassName} hoverable cover={imgSrc ? <ImgFallback src={imgSrc} /> : null}>
       <Typography.Title level={5}>{title}</Typography.Title>
       <Typography.Paragraph>{description}</Typography.Paragraph>
       {link ? link : null}

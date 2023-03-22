@@ -6,6 +6,9 @@ import { getPeople } from '../../queries/queries';
 import { InnerLink } from '../../components/Link/Link';
 import { Button, Typography } from 'antd';
 import { PersonSearchForm } from '../../modules/PersonSearchForm/PersonSearchForm';
+import { useQueryParams } from '../../hooks/useQueryParams';
+import { useNavigate } from 'react-router-dom';
+import { getQueryString, parseFormToQuery, searchFields } from './helpers';
 
 export interface IPerson {
   _id: string;
@@ -26,13 +29,21 @@ export interface ISearchPersonData {
 }
 
 export const PeoplePage = (): JSX.Element => {
+  const query = useQueryParams();
+  const navigate = useNavigate();
+
   const findPerson = async (values: ISearchPersonData): Promise<void> => {
-    console.log(values);
+    const q: string[] = parseFormToQuery(values);
+    if (q.length) {
+      navigate(`/people?${q.join('&')}`);
+    }
   };
 
+  const searchParams = getQueryString(searchFields, query);
+
   const { isLoading, isError, data, error } = useQuery({
-    queryKey: ['person'],
-    queryFn: () => getPeople(),
+    queryKey: ['person', searchParams],
+    queryFn: () => getPeople(searchParams),
   });
 
   if (isLoading) {
@@ -58,9 +69,8 @@ export const PeoplePage = (): JSX.Element => {
             title={person.personName}
             description={person?.personPositions?.map?.((pos) => pos.positionName).join(', ')}
             imgSrc={
-              person.personPic
-                ? `data:${person.personPic?.contentType};base64,${person.personPic?.data}`
-                : 'src'
+              person.personPic &&
+              `data:${person.personPic?.contentType};base64,${person.personPic?.data}`
             }
             link={<InnerLink path={`/people/${person._id}`}>More...</InnerLink>}
           />
