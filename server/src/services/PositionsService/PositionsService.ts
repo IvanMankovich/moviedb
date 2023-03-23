@@ -2,7 +2,7 @@ import { ErrorService } from '../ErrorService';
 import { Position } from '../../models/PositionModel';
 import { getGIRegEx, getSearchStr } from '../../utils/helpers';
 import { IQuery } from '../types';
-import { PipelineStage } from 'mongoose';
+import { PipelineStage, Types } from 'mongoose';
 
 class PositionsService {
   async addPosition(positionName: string) {
@@ -77,6 +77,15 @@ class PositionsService {
       currentPage: +pg,
     };
     return data;
+  }
+
+  async getPositionsByIds(ids: Types.ObjectId[]) {
+    try {
+      const positions = await Position.find({ _id: { $in: ids } });
+      return positions;
+    } catch (err) {
+      throw ErrorService.NotFound('Positions not found');
+    }
   }
 }
 

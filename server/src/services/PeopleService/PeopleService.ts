@@ -1,8 +1,14 @@
 import { PipelineStage, Types } from 'mongoose';
+import { ICountry } from '../../models/CountryModel';
+import { IGender } from '../../models/GenderModel';
 import { IPerson, Person } from '../../models/PersonModel';
+import { IPosition } from '../../models/PositionModel';
 import { getSearchStr, parseFiles } from '../../utils/helpers';
 import { assetsService } from '../AssetsService/AssetsService';
+import { countriesService } from '../CountriesService/CountriesService';
 import { ErrorService } from '../ErrorService';
+import { gendersService } from '../GendersService/GendersService';
+import { positionsService } from '../PositionsService/PositionsService';
 import { IPeopleQuery } from '../types';
 import { PersonBuilder, PersonDto } from './helpers';
 
@@ -171,22 +177,34 @@ class PeopleService {
       const searchObj = getSearchStr(qFields, qStr);
 
       const matchParams = [];
+      const formData: {
+        personGender?: IGender;
+        personPlaceOfBirth?: ICountry;
+        personPositions?: IPosition[];
+      } = {};
 
       if (searchObj) {
         matchParams.push(searchObj);
       }
 
       if (personGender) {
+        const gender = await gendersService.getGenderById(personGender);
+        formData.personGender = gender?.toObject?.() as IGender;
         matchParams.push({ personGender: new Types.ObjectId(personGender) });
       }
 
       if (personPlaceOfBirth) {
+        const country = await countriesService.getCountryById(personPlaceOfBirth);
+        formData.personPlaceOfBirth = country?.toObject?.() as ICountry;
         matchParams.push({ personPlaceOfBirth: new Types.ObjectId(personPlaceOfBirth) });
       }
 
       if (personPositions) {
         const positions = personPositions.split(',');
         const q = positions.map((v) => new Types.ObjectId(v));
+
+        const positionsArray = await positionsService.getPositionsByIds(q);
+        formData.personPositions = positionsArray.map((p) => p.toObject()) as IPosition[];
         matchParams.push({ personPositions: { $all: q } });
       }
 
@@ -284,6 +302,7 @@ class PeopleService {
         data: people[0].people,
         totalPages: people[0].totalCount[0] ? Math.ceil(people[0].totalCount[0].count / +limit) : 0,
         currentPage: +pg,
+        formData: formData,
       };
       return data;
     } catch (err) {

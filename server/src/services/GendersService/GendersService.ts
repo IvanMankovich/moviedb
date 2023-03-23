@@ -2,7 +2,7 @@ import { ErrorService } from '../ErrorService';
 import { Gender } from '../../models/GenderModel';
 import { getGIRegEx, getSearchStr } from '../../utils/helpers';
 import { IQuery } from '../types';
-import { PipelineStage } from 'mongoose';
+import { PipelineStage, Types } from 'mongoose';
 
 class GendersService {
   async addGender(genderName: string) {
@@ -77,6 +77,15 @@ class GendersService {
       currentPage: +pg,
     };
     return data;
+  }
+
+  async getGenderById(id: string) {
+    try {
+      const gender = await Gender.findOne({ _id: new Types.ObjectId(id) });
+      return gender;
+    } catch (err) {
+      throw ErrorService.NotFound('Gender not found');
+    }
   }
 }
 

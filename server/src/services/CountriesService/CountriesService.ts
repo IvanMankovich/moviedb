@@ -2,7 +2,7 @@ import { ErrorService } from '../ErrorService';
 import { Country } from '../../models/CountryModel';
 import { getGIRegEx, getSearchStr } from '../../utils/helpers';
 import { IQuery } from '../types';
-import { PipelineStage } from 'mongoose';
+import { PipelineStage, Types } from 'mongoose';
 
 class CountriesService {
   async addCountry(countryName: string) {
@@ -77,6 +77,15 @@ class CountriesService {
       currentPage: +pg,
     };
     return data;
+  }
+
+  async getCountryById(id: string) {
+    try {
+      const gender = await Country.findOne({ _id: new Types.ObjectId(id) });
+      return gender;
+    } catch (err) {
+      throw ErrorService.NotFound('Country not found');
+    }
   }
 }
 

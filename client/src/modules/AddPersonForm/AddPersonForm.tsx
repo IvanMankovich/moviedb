@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AutoComplete, Button, Form, Input, DatePicker, Upload, Alert, Typography } from 'antd';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { UploadChangeParam } from 'antd/es/upload';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -181,8 +181,8 @@ export const AddPersonForm = ({ addPerson, isLoading, errorMsg }: IRegisterUserF
         <Form.Item name='personDoB' label='Date of birth' {...dobConfig}>
           <DatePicker
             disabledDate={(current) => {
-              const customDate = moment().format('YYYY-MM-DD');
-              return current && current > moment(customDate, 'YYYY-MM-DD');
+              const customDate = dayjs().format('YYYY-MM-DD');
+              return current && current > dayjs(customDate, 'YYYY-MM-DD');
             }}
           />
         </Form.Item>

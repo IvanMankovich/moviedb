@@ -1,17 +1,42 @@
 import React from 'react';
 import axios from 'axios';
+import dayjs from 'dayjs';
 
 import { Alert, Button, DatePicker, Form, Input, Typography } from 'antd';
 import { AutocompleteCustom } from '../../components/AutocompleteCustom/AutocompleteCustom';
 import { ISearchPersonData } from '../../pages/People/PeoplePage';
+import { ICountry, IGender, IPosition } from '../../types/types';
+
+export interface ISelectableValues {
+  personGender?: IGender;
+  personPlaceOfBirth?: ICountry;
+  personPositions?: IPosition;
+}
 
 export interface ISearchPersonForm {
   searchPerson(values: ISearchPersonData): Promise<void>;
   isLoading: boolean;
   errorMsg: string;
+  initialValues?: ISearchPersonFormData;
+  fieldFormValue?: ISelectableValues;
 }
 
-export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchPersonForm) => {
+export interface ISearchPersonFormData {
+  qStr?: string;
+  personGender?: string;
+  personPlaceOfBirth?: string;
+  personPositions?: string[];
+  personDoBfrom?: dayjs.Dayjs;
+  personDoBto?: dayjs.Dayjs;
+}
+
+export const PersonSearchForm = ({
+  searchPerson,
+  isLoading,
+  errorMsg,
+  initialValues,
+  fieldFormValue,
+}: ISearchPersonForm) => {
   const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
@@ -27,7 +52,7 @@ export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchP
         import.meta.env.VITE_API_URL
       }/positions?qStr=${value}&qFields=positionName&pg=1&sortField=positionName&sortDir=1`,
     );
-    return response.data.data.map((i: { _id: string; positionName: string }) => ({
+    return response.data.data.map((i: IPosition) => ({
       value: i._id,
       label: i.positionName,
     }));
@@ -39,7 +64,7 @@ export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchP
         import.meta.env.VITE_API_URL
       }/genders?qStr=${value}&qFields=genderName&pg=1&sortField=genderName&sortDir=1`,
     );
-    return response.data.data.map((i: { _id: string; genderName: string }) => ({
+    return response.data.data.map((i: IGender) => ({
       value: i._id,
       label: i.genderName,
     }));
@@ -51,7 +76,7 @@ export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchP
         import.meta.env.VITE_API_URL
       }/countries?qStr=${value}&qFields=countryName&pg=1&sortField=countryName&sortDir=1`,
     );
-    return response.data.data.map((i: { _id: string; countryName: string }) => ({
+    return response.data.data.map((i: ICountry) => ({
       value: i._id,
       label: i.countryName,
     }));
@@ -62,21 +87,33 @@ export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchP
       <Typography.Title level={3}>Search</Typography.Title>
 
       {errorMsg ? <Alert message={'Search error'} description={errorMsg} type='error' /> : null}
-      <Form {...layout} onFinish={searchPerson} className='register-user-form' disabled={isLoading}>
+      <Form
+        {...layout}
+        onFinish={searchPerson}
+        className='register-user-form'
+        disabled={isLoading}
+        initialValues={initialValues}
+      >
         <Form.Item name={'qStr'} label='Person name'>
           <Input placeholder={`Person name`} />
         </Form.Item>
 
-        <Form.Item
-          name='personGender'
-          label='Gender'
-          rules={[{ message: 'Please select gender!' }]}
-        >
+        <Form.Item name='personGender' label='Gender'>
           <AutocompleteCustom
             searchCallback={gendersRequest}
             allowClear
             style={{ width: '100%' }}
             placeholder={`Select gender`}
+            defaultOptions={
+              fieldFormValue?.personGender
+                ? [
+                    {
+                      value: fieldFormValue.personGender._id,
+                      label: fieldFormValue.personGender.genderName,
+                    },
+                  ]
+                : []
+            }
           />
         </Form.Item>
 
@@ -89,6 +126,16 @@ export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchP
             showArrow={false}
             filterOption={false}
             showSearch
+            defaultOptions={
+              fieldFormValue?.personPlaceOfBirth
+                ? [
+                    {
+                      value: fieldFormValue.personPlaceOfBirth._id,
+                      label: fieldFormValue.personPlaceOfBirth.countryName,
+                    },
+                  ]
+                : []
+            }
           />
         </Form.Item>
 
@@ -102,6 +149,16 @@ export const PersonSearchForm = ({ searchPerson, isLoading, errorMsg }: ISearchP
             showArrow={false}
             filterOption={false}
             showSearch
+            defaultOptions={
+              fieldFormValue?.personPositions
+                ? [
+                    {
+                      value: fieldFormValue.personPositions._id,
+                      label: fieldFormValue.personPositions.positionName,
+                    },
+                  ]
+                : []
+            }
           />
         </Form.Item>
 
