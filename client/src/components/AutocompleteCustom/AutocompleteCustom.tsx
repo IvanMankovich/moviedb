@@ -11,6 +11,7 @@ export interface IOption {
 
 export interface ExtendedSelectProps extends SelectProps<valueType> {
   searchCallback?: (v: string) => Promise<IOption[]>;
+  defaultOptions?: IOption[];
 }
 
 export type IAutocompleteCustom = ExtendedSelectProps & {
@@ -19,8 +20,12 @@ export type IAutocompleteCustom = ExtendedSelectProps & {
   ref?: React.Ref<BaseSelectRef> | undefined;
 };
 
-export const AutocompleteCustom = ({ searchCallback, ...props }: IAutocompleteCustom) => {
-  const [options, setOptions] = useState<IOption[]>([]);
+export const AutocompleteCustom = ({
+  searchCallback,
+  defaultOptions = [],
+  ...props
+}: IAutocompleteCustom) => {
+  const [options, setOptions] = useState<IOption[]>(defaultOptions);
   const [isLoading, setLoading] = useState<boolean>(false);
 
   let timeout: ReturnType<typeof setTimeout> | null;

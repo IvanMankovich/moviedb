@@ -8,7 +8,13 @@ import { Button, Typography } from 'antd';
 import { PersonSearchForm } from '../../modules/PersonSearchForm/PersonSearchForm';
 import { useQueryParams } from '../../hooks/useQueryParams';
 import { useNavigate } from 'react-router-dom';
-import { getQueryString, parseFormToQuery, searchFields } from './helpers';
+import {
+  formFields,
+  getQueryString,
+  parseFormToQuery,
+  parseQueryToForm,
+  searchFields,
+} from './helpers';
 
 export interface IPerson {
   _id: string;
@@ -39,11 +45,12 @@ export const PeoplePage = (): JSX.Element => {
     }
   };
 
-  const searchParams = getQueryString(searchFields, query);
+  const searchString = getQueryString(searchFields, query);
+  const inintialFormValues = parseQueryToForm(formFields, query);
 
   const { isLoading, isError, data, error } = useQuery({
-    queryKey: ['person', searchParams],
-    queryFn: () => getPeople(searchParams),
+    queryKey: ['person', searchString],
+    queryFn: () => getPeople(searchString),
   });
 
   if (isLoading) {
@@ -60,7 +67,13 @@ export const PeoplePage = (): JSX.Element => {
       <InnerLink path='/add-person'>
         <Button type='primary'>Add person</Button>
       </InnerLink>
-      <PersonSearchForm searchPerson={findPerson} isLoading={false} errorMsg={''} />
+      <PersonSearchForm
+        searchPerson={findPerson}
+        isLoading={false}
+        errorMsg={''}
+        initialValues={inintialFormValues}
+        fieldFormValue={data?.data?.formData}
+      />
       <div className='cards-container'>
         {data?.data?.data?.map?.((person: IPerson) => (
           <PersonCard

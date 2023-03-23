@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import axios from 'axios';
 
 import { PlusOutlined } from '@ant-design/icons';
@@ -123,8 +123,8 @@ export const RegisterUserForm = ({
         <Form.Item name={'userDoB'} label='DoB' {...config}>
           <DatePicker
             disabledDate={(current) => {
-              const customDate = moment().format('YYYY-MM-DD');
-              return current && current > moment(customDate, 'YYYY-MM-DD');
+              const customDate = dayjs().format('YYYY-MM-DD');
+              return current && current > dayjs(customDate, 'YYYY-MM-DD');
             }}
           />
         </Form.Item>
