@@ -1,13 +1,14 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { Button, Typography } from 'antd';
+
 import { PersonCard } from '../../components/PersonCard/PersonCard';
 import { CardsLoading } from '../../modules/CardsLoading/CardsLoading';
 import { getPeople } from '../../queries/queries';
 import { InnerLink } from '../../components/Link/Link';
-import { Button, Typography } from 'antd';
 import { PersonSearchForm } from '../../modules/PersonSearchForm/PersonSearchForm';
 import { useQueryParams } from '../../hooks/useQueryParams';
-import { useNavigate } from 'react-router-dom';
 import {
   formFields,
   getQueryString,

@@ -24,6 +24,7 @@ import { PeoplePage } from './pages/People/PeoplePage';
 import { Theme } from './types/types';
 
 import './App.scss';
+import { AddMoviePage } from './pages/AddMovie/AddMoviePage';
 
 const App = (): JSX.Element => {
   const { user } = useAuthContext();
@@ -50,6 +51,7 @@ const App = (): JSX.Element => {
         <Route path='add-person' element={<AddPersonPage />} />
         <Route path='people/:id' element={<PersonPage />} />
         <Route path='people' element={<PeoplePage />} />
+        <Route path='add-movie' element={<AddMoviePage />} />
 
         <Route path='*' element={<NotFoundPage />} />
       </Routes>
