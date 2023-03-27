@@ -39,15 +39,14 @@ export const AddMoviePage = (): JSX.Element => {
 
   return (
     <>
-      <Title>Add person</Title>
-      <Typography.Text>Add new person data to our database to use it later</Typography.Text>
+      <Title>Add movie</Title>
+      <Typography.Text>Add new movie data to our database</Typography.Text>
       {isAdded ? (
         <Alert
           message={'Added successfully'}
           description={
             <>
               <Typography.Text>Person added successfully.</Typography.Text>
-              <Typography.Text> </Typography.Text>
             </>
           }
           type='success'
