@@ -1,21 +1,11 @@
 import React from 'react';
-import {
-  Button,
-  Form,
-  Input,
-  DatePicker,
-  Upload,
-  Alert,
-  Typography,
-  Space,
-  InputNumber,
-} from 'antd';
-import dayjs from 'dayjs';
+import { Button, Form, Input, DatePicker, Upload, Alert, Typography, InputNumber } from 'antd';
 import { UploadChangeParam } from 'antd/es/upload';
-import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 import { AutocompleteCustom } from '../../components/AutocompleteCustom/AutocompleteCustom';
+import { FormList } from '../../components/FromList/FormList';
 
 export interface IAddMovieForm {
   addMovie(values: any): Promise<void>;
@@ -35,10 +25,6 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
       xs: { span: 24 },
       sm: { span: 16 },
     },
-  };
-
-  const dobConfig = {
-    rules: [{ type: 'object' as const }],
   };
 
   const normFilee = (e: UploadChangeParam) => {
@@ -114,64 +100,61 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
           <Input />
         </Form.Item>
 
-        <Form.List name='moviePremiers'>
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name, ...restField }) => (
-                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'date']}
-                    label='Premiere date'
-                    {...dobConfig}
-                  >
-                    <DatePicker
-                      disabledDate={(current) => {
-                        const customDate = dayjs().format('YYYY-MM-DD');
-                        return current && current > dayjs(customDate, 'YYYY-MM-DD');
-                      }}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'country']}
-                    label='Country'
-                    rules={[{ required: true, message: `Please input country!` }]}
-                  >
-                    <AutocompleteCustom
-                      searchCallback={countriesRequest}
-                      allowClear
-                      style={{ width: '100%' }}
-                      placeholder={`Country`}
-                      showArrow={false}
-                      filterOption={false}
-                      showSearch
-                    />
-                  </Form.Item>
-
-                  <Form.Item {...restField} name={[name, 'restrictions']} label='Restriction'>
-                    {/* TODO: add resctrictions collection */}
-                    <AutocompleteCustom
-                      searchCallback={countriesRequest}
-                      allowClear
-                      style={{ width: '100%' }}
-                      placeholder={`Restrictions`}
-                      showArrow={false}
-                      filterOption={false}
-                      showSearch
-                    />
-                  </Form.Item>
-                  <MinusOutlined onClick={() => remove(name)} />
-                </Space>
-              ))}
-              <Form.Item>
-                <Button type='dashed' onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add premiere
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+        <FormList
+          addBtnText={'Add premiere'}
+          formListName={'moviePremiers'}
+          formItems={[
+            {
+              label: 'Premiere date',
+              name: 'premiereDate',
+              wrapperCol: { span: 24 },
+              labelCol: { span: 24 },
+              rules: [
+                {
+                  type: 'object' as const,
+                  required: true,
+                  message: 'Please select premiere date!',
+                },
+              ],
+              children: <DatePicker />,
+            },
+            {
+              label: 'Country',
+              name: 'premiereCountry',
+              wrapperCol: { span: 24 },
+              labelCol: { span: 24 },
+              rules: [{ required: true, message: `Please select country` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Country`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Restrictions',
+              name: 'premiereRestrictions',
+              wrapperCol: { span: 24 },
+              labelCol: { span: 24 },
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Restrictions`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
 
         <Form.Item
           name={'movieGenres'}
@@ -184,6 +167,19 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             allowClear
             style={{ width: '100%' }}
             placeholder={`Select genres`}
+            showArrow={false}
+            filterOption={false}
+            showSearch
+          />
+        </Form.Item>
+
+        <Form.Item name='movieProductionPlace' label='Production place'>
+          <AutocompleteCustom
+            searchCallback={countriesRequest}
+            mode='multiple'
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={`Select production place`}
             showArrow={false}
             filterOption={false}
             showSearch
@@ -241,112 +237,462 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
           <Input.TextArea showCount maxLength={2000} />
         </Form.Item>
 
-        <Form.List name='movieCast'>
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name, ...restField }) => (
-                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
-                  {/* !TODO: add person search  */}
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'person']}
-                    label='Person'
-                    rules={[{ required: true, message: `Please input person name!` }]}
-                  >
-                    <AutocompleteCustom
-                      searchCallback={countriesRequest}
-                      allowClear
-                      style={{ width: '100%' }}
-                      placeholder={`Select person`}
-                      showArrow={false}
-                      filterOption={false}
-                      showSearch
-                    />
-                  </Form.Item>
+        <FormList
+          addBtnText={'Add cast member'}
+          formListName={'movieCast'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'castPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'as',
+              name: 'castCharacterName',
+              children: <Input placeholder={`Character name`} />,
+            },
+          ]}
+        />
 
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'characterName']}
-                    label='as'
-                    rules={[{ required: true, message: `Please input person role!` }]}
-                  >
-                    <Input placeholder={`Character name`} />
-                  </Form.Item>
-                  <MinusOutlined onClick={() => remove(name)} />
-                </Space>
-              ))}
-              <Form.Item>
-                <Button type='dashed' onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add cast member
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+        <FormList
+          addBtnText={'Add art crew member'}
+          formListName={'movieArtCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'PersonPosition',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
 
-        <Form.List name='movieCrew'>
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map(({ key, name, ...restField }) => (
-                <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align='baseline'>
-                  {/* !TODO: add person search  */}
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'person']}
-                    label='Person'
-                    rules={[{ required: true, message: `Please input person name!` }]}
-                  >
-                    <AutocompleteCustom
-                      searchCallback={countriesRequest}
-                      allowClear
-                      style={{ width: '100%' }}
-                      placeholder={`Select person`}
-                      showArrow={false}
-                      filterOption={false}
-                      showSearch
-                    />
-                  </Form.Item>
+        <FormList
+          addBtnText={'Add camera crew member'}
+          formListName={'movieCameraCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
 
-                  <Form.Item
-                    {...restField}
-                    name={[name, 'person']}
-                    label='Position'
-                    rules={[{ required: true, message: `Please input person name!` }]}
-                  >
-                    <AutocompleteCustom
-                      searchCallback={positionsRequest}
-                      allowClear
-                      style={{ width: '100%' }}
-                      placeholder={`Select position`}
-                      showArrow={false}
-                      filterOption={false}
-                      showSearch
-                    />
-                  </Form.Item>
+        <FormList
+          addBtnText={'Add Costume & Make-Up crew member'}
+          formListName={'movieCostumeMakeUpCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
 
-                  <MinusOutlined onClick={() => remove(name)} />
-                </Space>
-              ))}
-              <Form.Item>
-                <Button type='dashed' onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add crew member
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+        <FormList
+          addBtnText={'Add crew member'}
+          formListName={'movieCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
 
-        <Form.Item name='movieProductionPlace' label='Production place'>
-          <AutocompleteCustom
-            searchCallback={countriesRequest}
-            allowClear
-            style={{ width: '100%' }}
-            placeholder={`Select person's place of birth`}
-            showArrow={false}
-            filterOption={false}
-            showSearch
-          />
-        </Form.Item>
+        <FormList
+          addBtnText={'Add directing crew member'}
+          formListName={'movieDirectingCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
+
+        <FormList
+          addBtnText={'Add editing crew member'}
+          formListName={'movieEditingCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
+
+        <FormList
+          addBtnText={'Add lighting crew member'}
+          formListName={'movieLightingCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
+
+        <FormList
+          addBtnText={'Add production crew member'}
+          formListName={'movieProductionCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
+
+        <FormList
+          addBtnText={'Add sound crew member'}
+          formListName={'movieSoundCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
+
+        <FormList
+          addBtnText={'Add visual effects crew member'}
+          formListName={'movieVisualEffectsCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
+
+        <FormList
+          addBtnText={'Add writing crew member'}
+          formListName={'movieWritingCrew'}
+          formItems={[
+            {
+              label: 'Person',
+              name: 'crewPerson',
+              rules: [{ required: true, message: `Please select person` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={countriesRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select person`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+            {
+              label: 'Person position',
+              name: 'crewPersonPosition',
+              rules: [{ required: true, message: `Please select position` }],
+              children: (
+                <AutocompleteCustom
+                  searchCallback={positionsRequest}
+                  allowClear
+                  style={{ width: '100%' }}
+                  placeholder={`Select position`}
+                  showArrow={false}
+                  filterOption={false}
+                  showSearch
+                />
+              ),
+            },
+          ]}
+        />
 
         <Form.Item>
           <Button type='primary' htmlType='submit'>
