@@ -1,19 +1,19 @@
 import { model, Schema } from 'mongoose';
 
-export interface ICountry {
+export interface ILanguage {
   _id: string;
-  countryName: string;
-  countryCode: string;
+  languageName: string;
+  languageCode: string;
 }
 
-const countrySchema = new Schema({
-  countryName: {
+const languageSchema = new Schema({
+  languageName: {
     type: Schema.Types.String,
     unique: true,
     required: true,
     index: 1,
   },
-  countryCode: {
+  languageCode: {
     type: Schema.Types.String,
     unique: true,
     required: true,
@@ -21,6 +21,6 @@ const countrySchema = new Schema({
   },
 });
 
-const Country = model('Country', countrySchema);
+const Language = model('Language', languageSchema);
 
-export { Country };
+export { Language };

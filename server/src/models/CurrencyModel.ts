@@ -1,19 +1,19 @@
 import { model, Schema } from 'mongoose';
 
-export interface ICountry {
+export interface ICurrency {
   _id: string;
-  countryName: string;
-  countryCode: string;
+  currencySymbol: string;
+  currencyCode: string;
 }
 
-const countrySchema = new Schema({
-  countryName: {
+const currencySchema = new Schema({
+  currencySymbol: {
     type: Schema.Types.String,
     unique: true,
     required: true,
     index: 1,
   },
-  countryCode: {
+  currencyCode: {
     type: Schema.Types.String,
     unique: true,
     required: true,
@@ -21,6 +21,6 @@ const countrySchema = new Schema({
   },
 });
 
-const Country = model('Country', countrySchema);
+const Currency = model('Currency', currencySchema);
 
-export { Country };
+export { Currency };
