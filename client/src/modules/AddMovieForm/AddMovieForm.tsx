@@ -1,11 +1,33 @@
 import React from 'react';
-import { Button, Form, Input, DatePicker, Upload, Alert, Typography, InputNumber } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  DatePicker,
+  Upload,
+  Alert,
+  Typography,
+  InputNumber,
+  Row,
+  Col,
+} from 'antd';
 import { UploadChangeParam } from 'antd/es/upload';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 import { AutocompleteCustom } from '../../components/AutocompleteCustom/AutocompleteCustom';
 import { FormList } from '../../components/FromList/FormList';
+import { FormItemProps } from 'antd';
+import {
+  ICountry,
+  ICurrency,
+  IFilmRating,
+  IGenre,
+  ILanguage,
+  IPerson,
+  IPosition,
+  IProductionStage,
+} from '../../types/types';
 
 export interface IAddMovieForm {
   addMovie(values: any): Promise<void>;
@@ -25,6 +47,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
       xs: { span: 24 },
       sm: { span: 16 },
     },
+  };
+
+  const formListItemLayout: Pick<FormItemProps, 'labelCol' | 'wrapperCol'> = {
+    labelCol: { span: 24 },
+    wrapperCol: { span: 24 },
   };
 
   const normFilee = (e: UploadChangeParam) => {
@@ -47,7 +74,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
         import.meta.env.VITE_API_URL
       }/positions?qStr=${value}&qFields=positionName&pg=1&sortField=positionName&sortDir=1`,
     );
-    return response.data.data.map((i: { _id: string; positionName: string }) => ({
+    return response.data.data.map((i: IPosition) => ({
       value: i._id,
       label: i.positionName,
     }));
@@ -59,7 +86,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
         import.meta.env.VITE_API_URL
       }/genres?qStr=${value}&qFields=genreName&pg=1&sortField=genreName&sortDir=1`,
     );
-    return response.data.data.map((i: { _id: string; genreName: string }) => ({
+    return response.data.data.map((i: IGenre) => ({
       value: i._id,
       label: i.genreName,
     }));
@@ -71,9 +98,69 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
         import.meta.env.VITE_API_URL
       }/countries?qStr=${value}&qFields=countryName&pg=1&sortField=countryName&sortDir=1`,
     );
-    return response.data.data.map((i: { _id: string; countryName: string }) => ({
+    return response.data.data.map((i: ICountry) => ({
       value: i._id,
       label: i.countryName,
+    }));
+  };
+
+  const peopleRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/people?qStr=${value}&qFields=personName&pg=1&sortField=personName&sortDir=1`,
+    );
+    return response.data.data.map((i: IPerson) => ({
+      value: i._id,
+      label: i.personName,
+    }));
+  };
+
+  const filmRatingsRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/film-ratings?qStr=${value}&qFields=filmRatingName&pg=1&sortField=filmRatingName&sortDir=1`,
+    );
+    return response.data.data.map((i: IFilmRating) => ({
+      value: i._id,
+      label: i.filmRatingName,
+    }));
+  };
+
+  const productionStagesRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/production-stages?qStr=${value}&qFields=productionStageName&pg=1&sortField=productionStageName&sortDir=1`,
+    );
+    return response.data.data.map((i: IProductionStage) => ({
+      value: i._id,
+      label: i.productionStageName,
+    }));
+  };
+
+  const languagesRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/languages?qStr=${value}&qFields=languageName&pg=1&sortField=languageName&sortDir=1`,
+    );
+    return response.data.data.map((i: ILanguage) => ({
+      value: i._id,
+      label: i.languageName,
+    }));
+  };
+
+  const currenciesRequest = async (value: string) => {
+    const response = await axios.get(
+      `${
+        import.meta.env.VITE_API_URL
+      }/currencies?qStr=${value}&qFields=currencyCode&pg=1&sortField=currencyCode&sortDir=1`,
+    );
+    return response.data.data.map((i: ICurrency) => ({
+      value: i._id,
+      label: i.currencySymbol,
     }));
   };
 
@@ -100,6 +187,95 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
           <Input />
         </Form.Item>
 
+        <Form.Item
+          name='movieStage'
+          label='Production stage'
+          rules={[{ required: true, message: 'Please select production stage' }]}
+        >
+          <AutocompleteCustom
+            searchCallback={productionStagesRequest}
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={`Select production stage`}
+          />
+        </Form.Item>
+
+        <Row gutter={12}>
+          <Col span={12}>
+            <Form.Item
+              name={['movieBudget', 'budgetAmount']}
+              label='Budget'
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+            >
+              <InputNumber min={0} placeholder={`Input budget`} style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              name={['movieBudget', 'budgetCurrency']}
+              label='Currency'
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+            >
+              <AutocompleteCustom
+                searchCallback={currenciesRequest}
+                allowClear
+                style={{ width: '100%' }}
+                placeholder={`Currency`}
+                showArrow={false}
+                filterOption={false}
+                showSearch
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={12}>
+          <Col span={12}>
+            <Form.Item
+              name={['movieRevenue', 'revenueAmount']}
+              label='Revenue'
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+            >
+              <InputNumber min={0} placeholder={`Input revenue`} style={{ width: '100%' }} />
+            </Form.Item>
+          </Col>
+
+          <Col span={12}>
+            <Form.Item
+              name={['movieRevenue', 'revenueCurrency']}
+              label='Currency'
+              labelCol={{ span: 24 }}
+              wrapperCol={{ span: 24 }}
+            >
+              <AutocompleteCustom
+                searchCallback={currenciesRequest}
+                allowClear
+                style={{ width: '100%' }}
+                placeholder={`Currency`}
+                showArrow={false}
+                filterOption={false}
+                showSearch
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Form.Item name={'movieLanguage'} label='Original language'>
+          <AutocompleteCustom
+            searchCallback={languagesRequest}
+            allowClear
+            style={{ width: '100%' }}
+            placeholder={`Language`}
+            showArrow={false}
+            filterOption={false}
+            showSearch
+          />
+        </Form.Item>
+
         <FormList
           addBtnText={'Add premiere'}
           formListName={'moviePremiers'}
@@ -107,8 +283,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Premiere date',
               name: 'premiereDate',
-              wrapperCol: { span: 24 },
-              labelCol: { span: 24 },
+              ...formListItemLayout,
               rules: [
                 {
                   type: 'object' as const,
@@ -121,8 +296,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Country',
               name: 'premiereCountry',
-              wrapperCol: { span: 24 },
-              labelCol: { span: 24 },
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select country` }],
               children: (
                 <AutocompleteCustom
@@ -137,16 +311,15 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
               ),
             },
             {
-              label: 'Restrictions',
-              name: 'premiereRestrictions',
-              wrapperCol: { span: 24 },
-              labelCol: { span: 24 },
+              label: 'Rating',
+              name: 'premiereRating',
+              ...formListItemLayout,
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={filmRatingsRequest}
                   allowClear
                   style={{ width: '100%' }}
-                  placeholder={`Restrictions`}
+                  placeholder={`Rating`}
                   showArrow={false}
                   filterOption={false}
                   showSearch
@@ -244,10 +417,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'castPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -260,6 +434,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'as',
               name: 'castCharacterName',
+              ...formListItemLayout,
               children: <Input placeholder={`Character name`} />,
             },
           ]}
@@ -272,10 +447,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -288,6 +464,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'PersonPosition',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -311,10 +488,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -327,6 +505,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -350,10 +529,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -366,6 +546,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -389,10 +570,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -405,6 +587,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -428,10 +611,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -444,6 +628,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -467,10 +652,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -483,6 +669,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -506,10 +693,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -522,6 +710,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -545,10 +734,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -561,6 +751,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -584,10 +775,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -600,6 +792,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -623,10 +816,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -639,6 +833,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom
@@ -662,10 +857,11 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person',
               name: 'crewPerson',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select person` }],
               children: (
                 <AutocompleteCustom
-                  searchCallback={countriesRequest}
+                  searchCallback={peopleRequest}
                   allowClear
                   style={{ width: '100%' }}
                   placeholder={`Select person`}
@@ -678,6 +874,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             {
               label: 'Person position',
               name: 'crewPersonPosition',
+              ...formListItemLayout,
               rules: [{ required: true, message: `Please select position` }],
               children: (
                 <AutocompleteCustom

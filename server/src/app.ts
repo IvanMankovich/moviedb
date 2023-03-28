@@ -14,6 +14,10 @@ import { countriesRouter } from './controllers/CountriesRouter';
 import { peopleRouter } from './controllers/PeopleRouter';
 import { gendersRouter } from './controllers/GendersRouter';
 import { genresRouter } from './controllers/GenresRouter';
+import { filmRatingsRouter } from './controllers/FilmRatingsRouter';
+import { productionStagesRouter } from './controllers/ProductionStagesRouter';
+import { languagesRouter } from './controllers/LanguagesRouter';
+import { currenciesRouter } from './controllers/CurrenciesRouter';
 
 import { UserContext } from './utils/UserContext';
 
@@ -48,6 +52,10 @@ app.use('/countries', countriesRouter);
 app.use('/people', peopleRouter);
 app.use('/genres', genresRouter);
 app.use('/genders', gendersRouter);
+app.use('/film-ratings', filmRatingsRouter);
+app.use('/production-stages', productionStagesRouter);
+app.use('/languages', languagesRouter);
+app.use('/currencies', currenciesRouter);
 
 const listetingServer = app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
 
