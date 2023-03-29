@@ -7,13 +7,13 @@ import { Avatar } from '../Avatar/Avatar';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
 import { OpenedDrawer } from '../Layout/Layout';
 
-import { IUserData } from '../types';
+import { IUserParsedData } from '../types';
 
 import './Header.scss';
 
 export interface IHeader {
   setOpen: React.Dispatch<React.SetStateAction<OpenedDrawer | null>>;
-  userData: IUserData | null;
+  userData: IUserParsedData | null;
 }
 
 export const Header = ({ setOpen, userData }: IHeader): JSX.Element => {

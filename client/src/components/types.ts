@@ -13,11 +13,31 @@ export interface IMenuItem {
   path?: string;
 }
 
-export interface IUserData {
+export interface IFile {
+  contentType: string;
+  data: string;
+}
+
+export interface IUserBasicData {
   userName: string;
   userEmail: string;
   userPassword: string;
   userFavoriteGenres: string[];
   userDescription: string;
   userDoB: string;
+  _id: string;
+}
+
+export interface IUserRawData extends IUserBasicData {
+  userPic: null | IFile[];
+}
+
+export interface IUserParsedData extends IUserBasicData {
+  userPic: null | string;
+}
+
+export interface CheckTokensResponse {
+  accessToken: string;
+  refreshToken: string;
+  userData: IUserRawData;
 }

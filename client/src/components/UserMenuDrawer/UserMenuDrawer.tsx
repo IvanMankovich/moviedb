@@ -6,14 +6,14 @@ import { CloseIcon } from '../Icon/CloseIcon/CloseIcon';
 import { MovieIcon } from '../Icon/MovieIcon/MovieIcon';
 import { Avatar } from '../Avatar/Avatar';
 
-import { IUserData } from '../types';
+import { IUserParsedData } from '../types';
 
 import './UserMenuDrawer.scss';
 
 export interface IUserMenuDrawer {
   onClose(): void;
   open: boolean;
-  userData: IUserData | null;
+  userData: IUserParsedData | null;
   menuItems: ReactNode;
 }
 

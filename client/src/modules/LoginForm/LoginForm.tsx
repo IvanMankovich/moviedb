@@ -6,7 +6,7 @@ import { useAuthContext } from '../../hooks/useAuthContext';
 import { UserContextAction } from '../../context/AuthContext';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
-import { IUserData } from '../../components/types';
+import { IUserParsedData } from '../../components/types';
 
 export interface ILoginFormData {
   userEmail: string;
@@ -15,7 +15,7 @@ export interface ILoginFormData {
 
 export interface ILoginResponse {
   accessToken: string;
-  userData: IUserData;
+  userData: IUserParsedData;
 }
 
 export const LoginForm = (): JSX.Element => {

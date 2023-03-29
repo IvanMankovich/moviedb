@@ -9,7 +9,7 @@ import { connectDB } from './db/dbConnect';
 import { usersRouter } from './controllers/UsersRouter';
 import { tokensRouter } from './controllers/TokensRouter';
 import { positionsRouter } from './controllers/PositionsRouter';
-import { movieRouter } from './controllers/Movie';
+import { moviesRouter } from './controllers/MoviesRouter';
 import { countriesRouter } from './controllers/CountriesRouter';
 import { peopleRouter } from './controllers/PeopleRouter';
 import { gendersRouter } from './controllers/GendersRouter';
@@ -45,7 +45,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send('health check');
 });
 app.use('/users', usersRouter);
-app.use('/movies', movieRouter);
+app.use('/movies', moviesRouter);
 app.use('/tokens', tokensRouter);
 app.use('/positions', positionsRouter);
 app.use('/countries', countriesRouter);

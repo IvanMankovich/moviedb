@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Form, Input, DatePicker, Upload, Alert, Typography, InputNumber } from 'antd';
-import { UploadChangeParam } from 'antd/es/upload';
+import { UploadChangeParam, UploadFile } from 'antd/es/upload';
 import { PlusOutlined } from '@ant-design/icons';
 
 import { AutocompleteCustom } from '../../components/AutocompleteCustom/AutocompleteCustom';
@@ -16,8 +16,57 @@ import {
   productionStagesRequest,
 } from '../../queries/queries';
 
+export interface ICrewMember {
+  crewPerson: string;
+  crewPersonPosition: string;
+}
+
+export interface IPremiere {
+  premiereDate: Date;
+  premiereCountry: string;
+  premiereRating: string;
+}
+
+export interface ISumOfMoney {
+  amount: number;
+  currency: string;
+}
+
+export interface ICast {
+  castPerson: string;
+  castCharacterName: string;
+}
+
+export interface IMovieData {
+  movieArtCrew: ICrewMember[];
+  movieBackdrop: UploadFile[];
+  movieBudget: ISumOfMoney;
+  movieCameraCrew: ICrewMember[];
+  movieCast: ICast[];
+  movieCostumeMakeUpCrew: ICrewMember[];
+  movieCrew: ICrewMember[];
+  movieDescription: string;
+  movieDirectingCrew: ICrewMember[];
+  movieDuration: number;
+  movieEditingCrew: ICrewMember[];
+  movieGenres: string[];
+  movieLanguage: string;
+  movieLightingCrew: ICrewMember[];
+  moviePoster: UploadFile[];
+  moviePremiers: IPremiere[];
+  movieProductionCrew: ICrewMember[];
+  movieProductionPlace: string;
+  movieRevenue: ISumOfMoney;
+  movieSlogan: string;
+  movieSoundCrew: ICrewMember[];
+  movieStage: string;
+  movieTitle: string;
+  movieVisualEffectsCrew: ICrewMember[];
+  movieWritingCrew: ICrewMember[];
+}
+
 export interface IAddMovieForm {
-  addMovie(values: any): Promise<void>;
+  addMovie(values: IMovieData): Promise<void>;
   isLoading: boolean;
   errorMsg: string;
 }
@@ -36,7 +85,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
     },
   };
 
-  const normFilee = (e: UploadChangeParam) => {
+  const normFile = (e: UploadChangeParam) => {
     if (Array.isArray(e)) {
       return e;
     }
@@ -91,13 +140,13 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             name: 'movieBudget',
             numberField: {
               label: 'Budget',
-              name: 'budgetAmount',
+              name: 'amount',
               placeholder: 'Input budget',
             },
             autocompleteField: {
               searchCallback: currenciesRequest,
               label: 'Currency',
-              name: 'budgetCurrency',
+              name: 'currency',
               placeholder: 'Select currency',
             },
           },
@@ -105,13 +154,13 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
             name: 'movieRevenue',
             numberField: {
               label: 'Revenue',
-              name: 'revenueAmount',
+              name: 'amount',
               placeholder: 'Input revenue',
             },
             autocompleteField: {
               searchCallback: currenciesRequest,
               label: 'Currency',
-              name: 'revenueCurrency',
+              name: 'currency',
               placeholder: 'Select currency',
             },
           },
@@ -216,7 +265,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
           name='moviePoster'
           label='Movie poster'
           valuePropName='fileList'
-          getValueFromEvent={normFilee}
+          getValueFromEvent={normFile}
         >
           <Upload
             name='moviePoster'
@@ -233,7 +282,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
           name='movieBackdrop'
           label='Movie backdrop'
           valuePropName='fileList'
-          getValueFromEvent={normFilee}
+          getValueFromEvent={normFile}
         >
           <Upload
             name='movieBackdrop '
