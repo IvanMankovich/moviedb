@@ -1,11 +1,11 @@
 import React from 'react';
 import { Avatar as AntdAvatar } from 'antd';
 
-import { IUserData } from '../types';
+import { IUserParsedData } from '../types';
 import { PersonIcon } from '../Icon/PersonIcon/PersonIcon';
 
 export interface IAvatar {
-  userData: IUserData | null;
+  userData: IUserParsedData | null;
 }
 
 export const Avatar = ({ userData }: IAvatar): JSX.Element => {

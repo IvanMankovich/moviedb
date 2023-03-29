@@ -18,7 +18,7 @@ import { favItemsLink, mainMenuItems } from '../../constants/mainMenuItems';
 import { AuthMenuItems } from '../../modules/MenuItems/AuthMenuItems/AuthMenuItems';
 import { UnauthMenuItems } from '../../modules/MenuItems/UnauthMenuItems/UnauthMenuItems';
 
-import { IMenuItem, IUserData } from '../types';
+import { IMenuItem, IUserParsedData } from '../types';
 
 import './Layout.scss';
 import { PageContent } from '../PageContent/PageContent';
@@ -26,7 +26,7 @@ import { PageContent } from '../PageContent/PageContent';
 export interface ILayout {
   children: ReactNode;
   theme: Theme;
-  user: IUserData | null;
+  user: IUserParsedData | null;
   navigate: NavigateFunction;
 }
 
@@ -44,7 +44,10 @@ export const Layout = ({ children, user, navigate, theme }: ILayout): JSX.Elemen
     setOpen(null);
   };
 
-  const getMainMenuItems = (user: IUserData | null, mainMenuItems: IMenuItem[]): IMenuItem[] => {
+  const getMainMenuItems = (
+    user: IUserParsedData | null,
+    mainMenuItems: IMenuItem[],
+  ): IMenuItem[] => {
     return (user ? [...mainMenuItems, favItemsLink] : mainMenuItems).map((item: IMenuItem) =>
       item.path
         ? {

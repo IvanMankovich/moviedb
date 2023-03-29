@@ -1,15 +1,15 @@
 import React, { createContext, useReducer, useEffect, ReactNode } from 'react';
 import axios from 'axios';
-import { IUserData } from '../components/types';
+import { IUserParsedData } from '../components/types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export interface IUserContext {
   dispatch: React.Dispatch<IUserContextAction>;
-  user: IUserData | null;
+  user: IUserParsedData | null;
 }
 
 export interface IUserContextState {
-  user: IUserData | null;
+  user: IUserParsedData | null;
 }
 
 export enum UserContextAction {
@@ -19,7 +19,7 @@ export enum UserContextAction {
 
 export interface IUserContextAction {
   type: UserContextAction;
-  payload: IUserData | null;
+  payload: IUserParsedData | null;
 }
 
 export const AuthContext = createContext<IUserContext | null>(null);

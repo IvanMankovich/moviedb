@@ -1,9 +1,6 @@
-import * as dotenv from 'dotenv';
 import { NextFunction, Response, Request } from 'express';
 import { ErrorService } from '../services/ErrorService';
 import { tokensService } from '../services/TokensService/TokensService';
-
-dotenv.config();
 
 function checkAuth(req: Request, res: Response, next: NextFunction) {
   try {
