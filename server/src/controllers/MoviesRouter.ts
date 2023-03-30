@@ -31,16 +31,22 @@ const moviesRouter = Router();
 //   // );
 // });
 
-// movieRouter.get('/:id', checkAuth, async (req: Request, res: Response) => {
-//   // const { Todo } = req.context.models;
-//   // const { username } = req.user;
-//   // const _id = req.params.id;
-//   // res.json(
-//   //   await Todo.findOne({ username, _id }).catch((error) =>
-//   //     res.status(400).json({ error })
-//   //   )
-//   // );
-// });
+moviesRouter.get('/:id', async (req: Request, res: Response) => {
+  try {
+    const movieId = req.params.id;
+    if (!movieId) {
+      throw ErrorService.BadRequest('Movie data not provided');
+    }
+    const movieData = await moviesService.getMovieById(movieId);
+    res.json(movieData);
+  } catch (error) {
+    if (error instanceof ErrorService) {
+      res.status(error.status).json(error);
+    } else {
+      res.status(500).json(error);
+    }
+  }
+});
 
 moviesRouter.post(
   '',

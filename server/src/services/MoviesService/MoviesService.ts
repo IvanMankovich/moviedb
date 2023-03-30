@@ -2,8 +2,8 @@ import { ErrorService } from '../ErrorService';
 import { IMovie, Movie } from '../../models/MovieModel';
 import { getGIRegEx, getSearchStr, parseFiles } from '../../utils/helpers';
 import { IQuery } from '../types';
-import { PipelineStage } from 'mongoose';
-import { MovieBuilder } from './helpers';
+import { PipelineStage, Types } from 'mongoose';
+import { MovieBuilder, MovieDto } from './helpers';
 import { assetsService } from '../AssetsService/AssetsService';
 
 class MoviesService {
@@ -107,6 +107,100 @@ class MoviesService {
       currentPage: +pg,
     };
     return data;
+  }
+
+  async getMovieById(id: string) {
+    try {
+      const isExists = await this.checkMovieId(id);
+      if (isExists) {
+        const movies = await Movie.aggregate([
+          { $match: { _id: new Types.ObjectId(id) } },
+          {
+            $lookup: {
+              from: 'assets',
+              localField: 'movieBackdrop',
+              foreignField: '_id',
+              as: 'movieBackdrop',
+            },
+          },
+          {
+            $lookup: {
+              from: 'assets',
+              localField: 'moviePoster',
+              foreignField: '_id',
+              as: 'moviePoster',
+            },
+          },
+          {
+            $lookup: {
+              from: 'languages',
+              localField: 'movieLanguage',
+              foreignField: '_id',
+              as: 'movieLanguage',
+            },
+          },
+          {
+            $lookup: {
+              from: 'genres',
+              localField: 'movieGenres',
+              foreignField: '_id',
+              as: 'movieGenres',
+            },
+          },
+          {
+            $lookup: {
+              from: 'countries',
+              localField: 'movieProductionPlace',
+              foreignField: '_id',
+              as: 'movieProductionPlace',
+            },
+          },
+          {
+            $lookup: {
+              from: 'productionStages',
+              localField: 'movieStage',
+              foreignField: '_id',
+              as: 'movieStage',
+            },
+          },
+          {
+            $lookup: {
+              from: 'people',
+              localField: 'movieCast.castPerson',
+              foreignField: '_id',
+              as: 'movieCast.castPerson',
+            },
+          },
+        ]);
+        const movie = movies?.[0];
+
+        if (movie) {
+          return new MovieDto(movie);
+        } else {
+          throw ErrorService.NotFound('Movie not found');
+        }
+      } else {
+        throw ErrorService.NotFound('Movie not found');
+      }
+    } catch (err) {
+      throw ErrorService.NotFound(err?.toString?.());
+    }
+  }
+
+  async checkMovieId(id?: string) {
+    try {
+      if (id) {
+        const isExists = await Movie.findById(id);
+        if (isExists) {
+          return true;
+        }
+        return false;
+      } else {
+        throw ErrorService.BadRequest('Movie id not provided');
+      }
+    } catch (err) {
+      throw ErrorService.BadRequest(err?.toString?.());
+    }
   }
 }
 
