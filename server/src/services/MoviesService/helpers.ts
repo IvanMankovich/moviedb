@@ -35,9 +35,9 @@ export class MovieBuilder {
     this.movieCast = model.movieCast ?? [];
     this.movieCostumeMakeUpCrew = model.movieCostumeMakeUpCrew ?? [];
     this.movieCrew = model.movieCrew ?? [];
-    this.movieDescription = model.movieDescription ?? [];
+    this.movieDescription = model.movieDescription ?? null;
     this.movieDirectingCrew = model.movieDirectingCrew ?? [];
-    this.movieDuration = model.movieDuration ?? [];
+    this.movieDuration = model.movieDuration ?? null;
     this.movieEditingCrew = model.movieEditingCrew ?? [];
     this.movieGenres = model.movieGenres ?? [];
     this.movieLanguage = model.movieLanguage ?? null;

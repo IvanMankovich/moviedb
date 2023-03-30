@@ -46,8 +46,8 @@ moviesRouter.post(
   '',
   checkAuth,
   upload.fields([
-    { name: 'personPic', maxCount: 10 },
-    { name: 'personGalleryPhotos', maxCount: 10 },
+    { name: 'movieBackdrop', maxCount: 10 },
+    { name: 'moviePoster', maxCount: 10 },
   ]),
   async (req: Request, res: Response) => {
     try {
@@ -56,7 +56,12 @@ moviesRouter.post(
       }
       const movieData = JSON.parse(req.body.movieData) as IMovie;
 
-      const createdMovie = await moviesService.addMovie(movieData);
+      const createdMovie = await moviesService.addMovie(
+        movieData,
+        req.files as {
+          [fieldname: string]: Express.Multer.File[];
+        },
+      );
       res.json({ createdMovie });
     } catch (error) {
       if (error instanceof ErrorService) {

@@ -136,7 +136,6 @@ const movieSchema = new Schema({
   ],
   movieDescription: {
     type: Schema.Types.String,
-    required: true,
   },
   movieDirectingCrew: [
     {
@@ -156,7 +155,6 @@ const movieSchema = new Schema({
   ],
   movieDuration: {
     type: Schema.Types.Number,
-    required: true,
   },
   movieEditingCrew: [
     {
@@ -175,7 +173,7 @@ const movieSchema = new Schema({
     },
   ],
   movieGenres: {
-    type: Schema.Types.ObjectId,
+    type: [Schema.Types.ObjectId],
     ref: 'Genre',
     required: true,
     index: 1,
@@ -183,7 +181,6 @@ const movieSchema = new Schema({
   movieLanguage: {
     type: Schema.Types.ObjectId,
     ref: 'Language',
-    required: true,
     index: 1,
   },
   movieLightingCrew: [
