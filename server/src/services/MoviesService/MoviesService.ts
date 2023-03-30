@@ -1,17 +1,39 @@
 import { ErrorService } from '../ErrorService';
 import { IMovie, Movie } from '../../models/MovieModel';
-import { getGIRegEx, getSearchStr } from '../../utils/helpers';
+import { getGIRegEx, getSearchStr, parseFiles } from '../../utils/helpers';
 import { IQuery } from '../types';
 import { PipelineStage } from 'mongoose';
 import { MovieBuilder } from './helpers';
+import { assetsService } from '../AssetsService/AssetsService';
 
 class MoviesService {
-  async addMovie(movieData: IMovie) {
+  async addMovie(
+    movieData: IMovie,
+    files?: {
+      [fieldname: string]: Express.Multer.File[];
+    },
+  ) {
     const isMovieExists = await this.isMovieExists(movieData);
 
     if (!isMovieExists) {
       const movie = new MovieBuilder(movieData);
       const newMovie = new Movie(movie);
+
+      if (files) {
+        const { movieBackdrop, moviePoster } = files;
+        if (movieBackdrop?.length) {
+          const movieBackdropToAdd = parseFiles(files.movieBackdrop);
+          const movieBackdrop = await assetsService.addAssets(movieBackdropToAdd);
+          newMovie.movieBackdrop = movieBackdrop.map((f) => f._id);
+        }
+
+        if (moviePoster?.length) {
+          const moviePosterToAdd = parseFiles(files.moviePoster);
+          const moviePoster = await assetsService.addAssets(moviePosterToAdd);
+          newMovie.moviePoster = moviePoster.map((f) => f._id);
+        }
+      }
+
       try {
         const result = await newMovie.save();
         return result;

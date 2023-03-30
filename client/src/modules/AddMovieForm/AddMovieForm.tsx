@@ -193,7 +193,7 @@ export const AddMovieForm = ({ addMovie, isLoading, errorMsg }: IAddMovieForm) =
                   message: 'Please select premiere date!',
                 },
               ],
-              children: <DatePicker />,
+              children: <DatePicker format={'YYYY-MM-DD'} />,
             },
             {
               label: 'Country',
