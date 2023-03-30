@@ -20,11 +20,12 @@ import { ProductPage } from './pages/Product/ProductPage';
 import { AddPersonPage } from './pages/AddPerson/AddPersonPage';
 import { PersonPage } from './pages/Person/PersonPage';
 import { PeoplePage } from './pages/People/PeoplePage';
+import { AddMoviePage } from './pages/AddMovie/AddMoviePage';
+import { MoviePage } from './pages/Movie/MoviePage';
 
 import { Theme } from './types/types';
 
 import './App.scss';
-import { AddMoviePage } from './pages/AddMovie/AddMoviePage';
 
 const App = (): JSX.Element => {
   const { user } = useAuthContext();
@@ -52,6 +53,7 @@ const App = (): JSX.Element => {
         <Route path='people/:id' element={<PersonPage />} />
         <Route path='people' element={<PeoplePage />} />
         <Route path='add-movie' element={<AddMoviePage />} />
+        <Route path='movie/:id' element={<MoviePage />} />
 
         <Route path='*' element={<NotFoundPage />} />
       </Routes>

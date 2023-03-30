@@ -18,6 +18,10 @@ export const getPeople = (q: string) => {
   return axios.get(`${import.meta.env.VITE_API_URL}/people${q ? `?${q}` : ''}`);
 };
 
+export const getMovie = (id?: string) => {
+  return axios.get(`${import.meta.env.VITE_API_URL}/movies/${id}`);
+};
+
 export const peopleRequest = async (value: string) => {
   const response = await axios.get(
     `${
